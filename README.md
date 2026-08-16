@@ -166,7 +166,7 @@ npm run check
 
 Furigana for Spotify 是一个独立开源项目。Spotify、Spotify logo 及相关品牌元素是 Spotify AB 的商标。本项目与 Spotify AB 没有关联，也未获得其赞助或认可。“for Spotify”仅用于说明兼容平台。
 
-项目图标为原创设计，使用“ふ”、注音条和音符表达日语歌词辅助功能，并刻意避开 Spotify 官方品牌规范中列出的绿色、圆形和波纹元素。参见 [Spotify Design & Branding Guidelines](https://developer.spotify.com/documentation/design)。
+项目图标为原创设计，使用“ふ”、注音条和音符表达日语歌词辅助功能。近黑、青翠绿和米白配色用于建立音乐流媒体产品的视觉联想；青翠绿与 Spotify Green 不同，图形也不使用 Spotify 的圆形、波纹或官方标识。参见 [Spotify Design & Branding Guidelines](https://developer.spotify.com/documentation/design)。
 
 ## License
 

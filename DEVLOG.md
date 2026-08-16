@@ -1,5 +1,11 @@
 # Devlog
 
+## 2026-08-16 — Streaming-inspired app logo palette
+
+- 将 App 主 Logo 从靛蓝/珊瑚色调整为近黑、青翠绿与米白，在不使用 Spotify 官方标识的前提下强化音乐流媒体产品联想。
+- 保留原有“ふ”、注音条、歌词卡、音符和整体轮廓；青翠绿代表色约为 `#01CA95`，与 Spotify Green `#1ED760` 保持明显差异。
+- 最终图标为 `1254 × 1254` 透明 PNG，并验证四角 alpha 为 `0`，适合作为 README 与后续应用图标素材。
+
 ## 2026-08-16 — Open-source README and original branding
 
 - 重写 README，加入项目视觉头图、状态徽章、效果示例、快速安装、更新/卸载、工作原理、兼容性范围与贡献指引。
