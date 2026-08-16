@@ -22,6 +22,14 @@
 
 ## 效果
 
+<p align="center">
+  <img src="./assets/screenshots/lyrics-view.png" alt="Windows Spotify 歌词页面中的实时日语振假名效果" width="100%" />
+</p>
+
+<p align="center">
+  <sub>实机截图：Windows 11 · Spotify 1.2.96.518 · Spicetify 2.44.0。歌词、封面及 Spotify 界面元素的权利归各自权利方所有，仅用于展示插件运行效果。</sub>
+</p>
+
 插件直接增强 Spotify 已经显示的歌词，把汉字转换为标准 HTML `<ruby>` 注音：
 
 | 原歌词 | 开启振假名后 |
