@@ -54,14 +54,12 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
 - **表示を自由に調整**：ひらがな・カタカナ・ローマ字を切り替え、サイズ、透明度、上下の間隔を調整できます。
 - **歌詞ソースを置き換えない**：Spotifyに表示済みのテキストだけを拡張し、歌詞の取得、保存、再配布は行いません。
 - **いつでも切り替え可能**：プレーヤー下部の歌詞ボタン、またはサイドバーのカスタムアプリ画面からオン・オフできます。
-- **安全なDOM挿入**：許可した `<ruby>`、`<rt>`、`<rp>` ノードだけを生成します。
 
 ## 必要環境
 
 - Windows 10 または Windows 11
 - Windows版Spotifyデスクトップアプリ
 - [Spicetify](https://spicetify.app/docs/getting-started)
-- Node.js 22以降（ビルド時のみ）
 
 実機で確認済みの構成：
 
@@ -73,11 +71,9 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
 
 ほかのバージョンでも動作する可能性はありますが、個別の検証はまだ行っていません。
 
-[互換性マトリクス](./COMPATIBILITY.md)では、実機検証と自動化された歌詞レイアウト検証を明確に分けています。
+詳しいバージョン情報は[互換性マトリクス](./COMPATIBILITY.md)を参照してください。
 
 ## インストール
-
-### Releaseパッケージ（推奨）
 
 <p>
   <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="最新リリースをダウンロード" src="https://img.shields.io/badge/Download-最新リリース-00A77D?style=for-the-badge&amp;logo=github" /></a>
@@ -91,27 +87,7 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-Releaseにはビルド済みの拡張機能とKuromoji辞書が含まれています。インストーラーは既存バージョンをタイムスタンプ付きでバックアップしてからSpicetifyへコピーし、アプリを有効化して `spicetify apply` を実行します。
-
-### ソースからビルド
-
-```powershell
-git clone https://github.com/huiishan99/spotify-furigana.git
-Set-Location spotify-furigana
-npm ci
-npm run build
-```
-
-### ソースビルドをSpicetifyへインストール
-
-```powershell
-$target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
-New-Item -ItemType Directory -Force $target | Out-Null
-Copy-Item -Recurse -Force "dist\spotify-furigana\*" $target
-
-spicetify config custom_apps spotify-furigana
-spicetify apply
-```
+インストーラーは既存バージョンをバックアップし、アプリのインストールと有効化、Spicetify設定の適用を行います。
 
 Spotifyを再起動し、歌詞のある日本語の曲を再生して歌詞画面を開きます。初回変換時はローカル辞書の読み込みに少し時間がかかります。
 
@@ -138,7 +114,7 @@ Spotifyのサイドバーから **Furigana for Spotify** を開くと、次の�
 - 上下の間隔を最大8 px追加
 - ワンクリックで表示設定を初期値に戻す
 
-設定はローカルに保存され、すぐに反映されます。読みの種類を切り替えると表示中の注釈を再生成し、外観スライダーは形態素解析をやり直さずに更新されます。
+設定はローカルに保存され、すぐに反映されます。
 
 ## アンインストール
 
@@ -146,53 +122,12 @@ Spotifyのサイドバーから **Furigana for Spotify** を開くと、次の�
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
-## 仕組み
+## トラブルシューティング
 
-```text
-Spotifyの歌詞DOM
-        ↓
-漢字を含む歌詞行を検出
-        ↓
-Kuroshiro + Kuromojiで選択した読み形式に変換
-        ↓
-安全な <ruby> / <rt> 注釈を生成
-```
-
-## リポジトリ構成
-
-```text
-spotify-furigana/
-├── app/          # Spicetify Custom Appの画面、スタイル、manifest
-├── assets/       # プロジェクトロゴ、実機スクリーンショット、共有用素材
-├── docs/         # 中国語・日本語README
-├── packaging/    # Release用インストーラー、アンインストーラー、オフライン説明
-├── scripts/      # ビルドとアセットコピー用スクリプト
-├── src/          # 歌詞監視、セレクター、設定、読み変換エンジン
-├── tests/        # Vitestユニットテスト
-├── types/        # KuroshiroとSpicetifyの型宣言
-├── manifest.json # Spicetify Marketplaceの検出用メタデータ
-└── README.md     # 英語の標準エントリーポイント
-```
-
-主なファイル：
-
-- `src/extension.ts`：歌詞DOMの監視、オン・オフ状態、歌詞行の更新。
-- `src/lyrics.ts`：新旧Spotify歌詞レイアウト用セレクター。
-- `src/reading-engine.ts`：ローカル読み変換と安全なDOM生成。
-- `scripts/build.mjs`：拡張機能のバンドルとKuromoji辞書のコピー。
-
-実行層、ソース、テスト、ビルド、型、ドキュメントがすでに分離されているため、見た目だけを目的としたソースディレクトリの移動は不要です。
-
-## 開発
-
-```powershell
-npm ci
-npm run check
-npm run marketing-assets
-npm run package
-```
-
-`npm run check` はTypeScriptチェック、Vitestテスト、プロダクションビルドを順番に実行します。`npm run marketing-assets` は、元のプロジェクトロゴと実機スクリーンショットから共有用画像とデモGIFを決定的に再生成します。`npm run package` はGit管理外の `release/` ディレクトリにインストール用ZIPとSHA-256チェックサムを生成します。
+- **サイドバーにFuriganaページがない：**`spicetify apply` を実行し、Spotifyを再起動してください。
+- **ボタンはあるが歌詞が変わらない：**漢字を含む日本語歌詞がある曲か、歌詞ボタンがオンかを確認し、初回のローカル辞書読み込みを少し待ってください。
+- **Spotify更新後にアプリが消えた：**`spicetify backup apply` を実行し、Spotifyを再起動してください。
+- **Microsoft Store版SpotifyでSpicetifyが読み込まれない：**`spicetify auto` での起動を試し、[Spicetify FAQ](https://spicetify.app/docs/faq)を確認してください。
 
 ## 既知の制限
 
@@ -200,27 +135,9 @@ npm run package
 - Spotifyの更新によって歌詞DOMが変わる可能性があります。突然動作しなくなった場合は、SpotifyとSpicetifyのバージョンをissueに記載してください。
 - 現在はWindows版Spotifyデスクトップアプリのみを対象としており、Web Player、macOS、モバイル版には対応していません。
 
-## ロードマップ
-
-- [x] 読みのサイズ、透明度、上下間隔の設定
-- [x] ひらがな・カタカナ・ローマ字表示モード
-- [x] 1コマンドでのインストール・更新
-- [x] 公開互換性マトリクスと現行・旧歌詞レイアウトの自動検証
-- [x] Spicetify Marketplaceの検出方式への公開
-
-最初のv0.1ロードマップはすべて完了しました。今後の機能は [GitHub Issues](https://github.com/huiishan99/spotify-furigana/issues) で管理し、新しい実機検証結果は[互換性マトリクス](./COMPATIBILITY.md)へ追加します。
-
 ## コントリビューション
 
-IssueとPull Requestを歓迎します。変更を送る前に [CONTRIBUTING.md](../CONTRIBUTING.md) を確認してください。Spotifyの歌詞レイアウト変更については、互換性レポート用テンプレートを利用できます。
-
-提出前に次のコマンドを実行してください。
-
-```powershell
-npm run check
-```
-
-互換性の問題を報告する場合は、Spotifyのバージョン、Spicetifyのバージョン、歌詞画面の種類、アカウント情報を含まないコンソールエラーを記載してください。歌詞全文は貼り付けないでください。
+問題やアイデアがある場合は [Issue](https://github.com/huiishan99/spotify-furigana/issues) を開いてください。Pull Requestを送る前に [CONTRIBUTING.md](../CONTRIBUTING.md) を確認してください。
 
 セキュリティ上の問題は [SECURITY.md](../SECURITY.md) の手順に従って非公開で報告してください。
 

@@ -54,14 +54,12 @@ The extension enhances lyrics already displayed by Spotify and uses standard HTM
 - **Choose how readings appear**: switch between hiragana, katakana, and romaji, then tune size, opacity, and vertical spacing.
 - **Does not replace the lyrics source**: it only enhances text already visible in Spotify and does not fetch, store, or redistribute lyrics.
 - **Easy to toggle**: use the lyrics button in the player bar or the custom app page in the sidebar.
-- **Safe DOM output**: only allowlisted `<ruby>`, `<rt>`, and `<rp>` nodes are created.
 
 ## Requirements
 
 - Windows 10 or Windows 11
 - Spotify desktop for Windows
 - [Spicetify](https://spicetify.app/docs/getting-started)
-- Node.js 22 or later (build time only)
 
 Verified on real hardware with:
 
@@ -73,11 +71,9 @@ Verified on real hardware with:
 
 Other versions may work, but have not been individually verified.
 
-See the [compatibility matrix](./docs/COMPATIBILITY.md) for the distinction between real-client verification and automated layout coverage.
+See the [compatibility matrix](./docs/COMPATIBILITY.md) for more version information.
 
 ## Install
-
-### Release package (recommended)
 
 <p>
   <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="Download the latest release" src="https://img.shields.io/badge/Download-latest%20release-00A77D?style=for-the-badge&amp;logo=github" /></a>
@@ -91,27 +87,7 @@ See the [compatibility matrix](./docs/COMPATIBILITY.md) for the distinction betw
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-The release already contains the compiled extension and Kuromoji dictionary. The installer preserves an existing installation as a timestamped backup, copies the app into Spicetify, enables it, and runs `spicetify apply`.
-
-### Build from source
-
-```powershell
-git clone https://github.com/huiishan99/spotify-furigana.git
-Set-Location spotify-furigana
-npm ci
-npm run build
-```
-
-### Install the source build into Spicetify
-
-```powershell
-$target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
-New-Item -ItemType Directory -Force $target | Out-Null
-Copy-Item -Recurse -Force "dist\spotify-furigana\*" $target
-
-spicetify config custom_apps spotify-furigana
-spicetify apply
-```
+The installer backs up an existing installation, installs and enables the app, and applies the Spicetify configuration.
 
 Restart Spotify, play a Japanese song with lyrics, and open the lyrics view. The local dictionary may take a moment to load on the first conversion.
 
@@ -138,7 +114,7 @@ Open **Furigana for Spotify** from Spotify's sidebar. The settings page lets you
 - add up to 8 px of vertical spacing;
 - restore the display defaults with one click.
 
-Changes are saved locally and apply immediately. Switching the reading mode rebuilds the currently visible annotations; appearance sliders update without rerunning the tokenizer.
+Changes are saved locally and apply immediately.
 
 ## Uninstall
 
@@ -146,54 +122,12 @@ Changes are saved locally and apply immediately. Switching the reading mode rebu
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
-## How it works
+## Troubleshooting
 
-```text
-Spotify lyrics DOM
-        ↓
-Find lyric lines containing kanji
-        ↓
-Convert to the selected reading mode with Kuroshiro + Kuromoji
-        ↓
-Build safe <ruby> / <rt> annotations
-```
-
-## Repository layout
-
-```text
-spotify-furigana/
-├── app/          # Spicetify Custom App page, styles, and manifest
-├── assets/       # Project logo, live screenshots, and launch artwork
-├── docs/         # Chinese and Japanese README translations
-├── packaging/    # Release installer, uninstaller, and offline instructions
-├── scripts/      # Build and asset-copy scripts
-├── src/          # Lyrics observer, selectors, settings, and reading engine
-├── tests/        # Vitest unit tests
-├── types/        # Kuroshiro and Spicetify type declarations
-├── manifest.json # Spicetify Marketplace discovery metadata
-└── README.md     # Canonical English entry point
-```
-
-Key files:
-
-- `src/extension.ts`: observes the lyrics DOM, manages the toggle, and updates lyric lines.
-- `src/lyrics.ts`: contains selectors for current and legacy Spotify lyrics layouts.
-- `src/reading-engine.ts`: performs local hiragana, katakana, or romaji conversion and builds safe DOM nodes.
-- `src/settings.ts`: validates and persists the complete display configuration.
-- `scripts/build.mjs`: bundles the extension and copies the Kuromoji dictionary.
-
-The runtime, source, tests, build tooling, types, assets, and documentation already have clear boundaries, so the source directories do not need a cosmetic reorganization.
-
-## Development
-
-```powershell
-npm ci
-npm run check
-npm run marketing-assets
-npm run package
-```
-
-`npm run check` runs TypeScript checks, Vitest, and the production build. `npm run marketing-assets` deterministically rebuilds the social preview and animated demo from the original project logo and real screenshot. `npm run package` creates the ready-to-install ZIP and SHA-256 checksum under the ignored `release/` directory.
+- **No Furigana page in the sidebar:** run `spicetify apply`, then restart Spotify.
+- **The button appears but lyrics are unchanged:** make sure the song has Japanese lyrics containing kanji, enable the lyrics button, and wait briefly for the first local dictionary load.
+- **The app disappeared after a Spotify update:** run `spicetify backup apply` and restart Spotify.
+- **Microsoft Store Spotify does not load Spicetify:** try launching it with `spicetify auto` and check the [Spicetify FAQ](https://spicetify.app/docs/faq).
 
 ## Known limitations
 
@@ -201,27 +135,9 @@ npm run package
 - Spotify updates can change the lyrics DOM. If the extension stops working, include your Spotify and Spicetify versions in the issue.
 - The project currently targets Spotify desktop for Windows only. Web Player, macOS, and mobile are not supported.
 
-## Roadmap
-
-- [x] Furigana size, opacity, and spacing controls
-- [x] Hiragana, katakana, and romaji display modes
-- [x] One-command install and update script
-- [x] Public compatibility matrix and automated current/legacy layout coverage
-- [x] Spicetify Marketplace discovery publication
-
-The original v0.1 roadmap is complete. Future work is tracked through [GitHub Issues](https://github.com/huiishan99/spotify-furigana/issues) and confirmed-version reports are added to the [compatibility matrix](./docs/COMPATIBILITY.md).
-
 ## Contributing
 
-Issues and pull requests are welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a change, and use the compatibility report template when Spotify changes its lyrics layout.
-
-Before submitting a change, run:
-
-```powershell
-npm run check
-```
-
-For compatibility reports, include the Spotify version, Spicetify version, lyrics view type, and console errors with account information removed. Do not paste complete lyrics.
+Found a problem or have an idea? Open an [Issue](https://github.com/huiishan99/spotify-furigana/issues) or read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a pull request.
 
 Security issues should be reported privately as described in [SECURITY.md](./SECURITY.md).
 

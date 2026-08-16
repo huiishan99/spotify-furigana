@@ -54,14 +54,12 @@
 - **自由调整显示**：可切换平假名、片假名与罗马字，并调整字号、透明度和上下间距。
 - **不接管歌词来源**：只增强 Spotify 当前显示的文本，不抓取、保存或重新分发歌词。
 - **随时开关**：通过播放器底部的歌词图标按钮，或左侧插件页面控制。
-- **安全插入 DOM**：只生成经过白名单处理的 `<ruby>`、`<rt>` 和 `<rp>` 节点。
 
 ## 环境要求
 
 - Windows 10 或 Windows 11
 - Windows Spotify 桌面客户端
 - [Spicetify](https://spicetify.app/docs/getting-started)
-- Node.js 22 或更高版本（仅构建时需要）
 
 当前已实机验证：
 
@@ -73,11 +71,9 @@
 
 其他版本可能也能工作，但尚未逐一验证。
 
-请查看[兼容性矩阵](./COMPATIBILITY.md)，其中明确区分实机验证与自动化歌词布局覆盖。
+更多版本信息请查看[兼容性矩阵](./COMPATIBILITY.md)。
 
 ## 安装
-
-### Release 安装包（推荐）
 
 <p>
   <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="下载最新版本" src="https://img.shields.io/badge/下载-最新版本-00A77D?style=for-the-badge&amp;logo=github" /></a>
@@ -91,27 +87,7 @@
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-安装包已包含编译后的扩展和 Kuromoji 词典。安装器会先把现有版本保存为带时间戳的备份，然后复制到 Spicetify、启用插件并运行 `spicetify apply`。
-
-### 从源码构建
-
-```powershell
-git clone https://github.com/huiishan99/spotify-furigana.git
-Set-Location spotify-furigana
-npm ci
-npm run build
-```
-
-### 将源码构建安装到 Spicetify
-
-```powershell
-$target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
-New-Item -ItemType Directory -Force $target | Out-Null
-Copy-Item -Recurse -Force "dist\spotify-furigana\*" $target
-
-spicetify config custom_apps spotify-furigana
-spicetify apply
-```
+安装器会备份现有版本、安装并启用插件，然后应用 Spicetify 配置。
 
 重新启动 Spotify，播放一首带歌词的日语歌曲，然后打开歌词页面。第一次转换时，本地词典需要短暂加载。
 
@@ -138,7 +114,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 - 增加最多 8 px 的上下间距；
 - 一键恢复默认显示。
 
-设置会保存在本地并立即生效。切换读音形式会重新生成当前可见歌词；外观滑块不需要重新运行分词器。
+设置会保存在本地并立即生效。
 
 ## 卸载
 
@@ -146,53 +122,12 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
-## 工作原理
+## 常见问题
 
-```text
-Spotify 歌词 DOM
-        ↓
-识别含汉字的歌词行
-        ↓
-Kuroshiro + Kuromoji 转换为所选读音形式
-        ↓
-安全生成 <ruby> / <rt> 注音
-```
-
-## 仓库结构
-
-```text
-spotify-furigana/
-├── app/          # Spicetify Custom App 页面、样式与 manifest
-├── assets/       # 项目 Logo、实机截图与推广素材
-├── docs/         # 中文、日文 README
-├── packaging/    # Release 安装器、卸载器与离线说明
-├── scripts/      # 构建与资源复制脚本
-├── src/          # 歌词观察、选择器、设置与读音引擎
-├── tests/        # Vitest 单元测试
-├── types/        # Kuroshiro 与 Spicetify 类型声明
-├── manifest.json # Spicetify Marketplace 发现元数据
-└── README.md     # 英文默认入口
-```
-
-关键代码：
-
-- `src/extension.ts`：观察歌词 DOM、管理开关并更新歌词行。
-- `src/lyrics.ts`：维护新旧 Spotify 歌词布局选择器。
-- `src/reading-engine.ts`：本地读音转换与安全 DOM 构建。
-- `scripts/build.mjs`：打包扩展并复制 Kuromoji 词典。
-
-当前结构已经按运行层、源码、测试、构建、类型和文档分开，无需为了目录美观重排代码。
-
-## 开发
-
-```powershell
-npm ci
-npm run check
-npm run marketing-assets
-npm run package
-```
-
-`npm run check` 会依次执行 TypeScript 检查、Vitest 测试和生产构建。`npm run marketing-assets` 会使用项目原始 Logo 和真实截图，确定性地重新生成社交封面与演示动图。`npm run package` 会在被 Git 忽略的 `release/` 目录中生成可直接安装的 ZIP 和 SHA-256 校验文件。
+- **左侧栏没有 Furigana 页面：**运行 `spicetify apply`，然后重新启动 Spotify。
+- **按钮出现但歌词没有变化：**确认歌曲有包含汉字的日语歌词、歌词按钮处于开启状态，并等待首次本地词典加载。
+- **Spotify 更新后插件消失：**运行 `spicetify backup apply`，然后重新启动 Spotify。
+- **Microsoft Store 版 Spotify 没有加载 Spicetify：**尝试用 `spicetify auto` 启动，并查看 [Spicetify FAQ](https://spicetify.app/docs/faq)。
 
 ## 已知限制
 
@@ -200,27 +135,9 @@ npm run package
 - Spotify 更新可能改变歌词 DOM；若插件突然失效，请在 issue 中附上 Spotify 与 Spicetify 版本。
 - 当前只面向 Windows Spotify 桌面客户端，不支持 Web Player、macOS 或移动端。
 
-## 路线图
-
-- [x] 调整注音字号、透明度和上下间距
-- [x] 平假名、片假名与罗马字显示模式
-- [x] 一条命令安装与更新
-- [x] 公开兼容性矩阵及当前/旧版歌词布局自动化覆盖
-- [x] 发布到 Spicetify Marketplace 发现机制
-
-最初的 v0.1 路线图已经全部完成。后续功能通过 [GitHub Issues](https://github.com/huiishan99/spotify-furigana/issues) 跟踪，新的实机验证结果会加入[兼容性矩阵](./COMPATIBILITY.md)。
-
 ## 参与贡献
 
-欢迎提交 Issue 和 Pull Request。提交改动前请阅读 [CONTRIBUTING.md](../CONTRIBUTING.md)；Spotify 更新歌词布局后，请优先使用兼容性报告模板。
-
-提交前请先运行：
-
-```powershell
-npm run check
-```
-
-报告兼容性问题时，请提供 Spotify 版本、Spicetify 版本、歌词视图类型，以及不包含账号信息的控制台错误。请不要粘贴完整歌词。
+遇到问题或有新想法？可以提交 [Issue](https://github.com/huiishan99/spotify-furigana/issues)；准备 Pull Request 前请先阅读 [CONTRIBUTING.md](../CONTRIBUTING.md)。
 
 安全问题请按照 [SECURITY.md](../SECURITY.md) 私下报告。
 

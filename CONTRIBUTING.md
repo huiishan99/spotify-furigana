@@ -21,6 +21,8 @@ Compatibility reports are most useful when they include:
 
 Requirements: Node.js 22 or later and npm.
 
+Read the [development guide](./docs/DEVELOPMENT.md) for the architecture, repository layout, source-build installation, and verification boundaries.
+
 ```powershell
 npm ci
 npm run check
