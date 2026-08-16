@@ -1,5 +1,12 @@
 # Devlog
 
+## 2026-08-16 — Recognizable playbar icon
+
+- 将播放器底部的通用歌词图标替换为项目专属「ふ」图标，并保留顶部注音条元素，使其在小尺寸下也能关联到 Furigana for Spotify。
+- 图标使用 `currentColor` 跟随 Spotify 的普通、悬停和启用状态，不使用 Spotify 官方圆形或波纹标识。
+- 新增图标结构测试，防止后续改动意外退回 Spotify 内置图标名称。
+- 将补丁版本提升为 `0.2.1`，确保 Release 安装用户可以直接获得新图标。
+
 ## 2026-08-16 — User-focused README
 
 - 将三语 README 收敛为功能介绍、兼容环境、Release 安装、更新、显示设置、卸载、故障排查与支持入口。
