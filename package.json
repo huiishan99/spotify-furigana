@@ -1,0 +1,30 @@
+{
+  "name": "spotify-furigana",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A browser extension that adds furigana to Japanese lyrics in Spotify Web Player.",
+  "scripts": {
+    "dev": "npm run copy:dict && wxt",
+    "build": "npm run copy:dict && wxt build",
+    "zip": "npm run copy:dict && wxt zip",
+    "copy:dict": "node scripts/copy-kuromoji-dict.mjs",
+    "compile": "npm run copy:dict && wxt prepare && tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run compile && npm run test && npm run build",
+    "postinstall": "npm run copy:dict && wxt prepare"
+  },
+  "dependencies": {
+    "kuroshiro": "^1.2.0",
+    "kuroshiro-analyzer-kuromoji": "^1.1.0"
+  },
+  "devDependencies": {
+    "path-browserify": "^1.0.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10",
+    "wxt": "^0.21.4"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
