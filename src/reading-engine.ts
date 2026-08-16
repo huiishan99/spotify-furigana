@@ -1,5 +1,6 @@
 import Kuroshiro from "kuroshiro";
 import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
+import type { ReadingMode } from "./settings";
 
 let enginePromise: Promise<Kuroshiro> | undefined;
 let activeDictionaryPath: string | undefined;
@@ -27,11 +28,12 @@ function getEngine(dictionaryPath: string): Promise<Kuroshiro> {
 export async function convertToFurigana(
   value: string,
   dictionaryPath: string,
+  readingMode: ReadingMode = "hiragana",
 ): Promise<string> {
   const engine = await getEngine(dictionaryPath);
   return engine.convert(value, {
     mode: "furigana",
-    to: "hiragana",
+    to: readingMode,
   });
 }
 

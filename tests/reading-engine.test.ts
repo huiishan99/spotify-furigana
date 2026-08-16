@@ -14,4 +14,14 @@ describe("local reading engine", () => {
     expect(converted).toContain("<rt>よる</rt>");
     expect(converted).toContain("<ruby>駆");
   });
+
+  it.each([
+    ["hiragana", "<rt>よる</rt>"],
+    ["katakana", "<rt>ヨル</rt>"],
+    ["romaji", "<rt>yoru</rt>"],
+  ] as const)("supports %s readings", async (mode, expectedReading) => {
+    const converted = await convertToFurigana("夜に駆ける", dictionaryPath, mode);
+
+    expect(converted).toContain(expectedReading);
+  });
 });
