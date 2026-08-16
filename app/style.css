@@ -37,6 +37,32 @@
   background: var(--spice-card);
 }
 
+.spotify-furigana-app__panel {
+  margin-top: 18px;
+  padding: 24px;
+  border: 1px solid color-mix(in srgb, var(--spice-text) 12%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--spice-card) 78%, transparent);
+}
+
+.spotify-furigana-app__panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.spotify-furigana-app__panel-heading h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.spotify-furigana-app__panel-heading p {
+  margin: 5px 0 0;
+  color: var(--spice-subtext);
+}
+
 .spotify-furigana-app__card strong {
   font-size: 17px;
 }
@@ -62,9 +88,124 @@
   transform: scale(1.04);
 }
 
+.spotify-furigana-app__reset {
+  padding: 7px 12px;
+  border: 1px solid color-mix(in srgb, var(--spice-text) 20%, transparent);
+  border-radius: 999px;
+  color: var(--spice-text);
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.spotify-furigana-app__reset:hover {
+  border-color: var(--spice-button);
+  color: var(--spice-button);
+}
+
+.spotify-furigana-app__label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.spotify-furigana-app__segments {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.spotify-furigana-app__segment {
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--spice-text) 16%, transparent);
+  border-radius: 10px;
+  color: var(--spice-subtext);
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.spotify-furigana-app__segment:hover {
+  color: var(--spice-text);
+  background: color-mix(in srgb, var(--spice-text) 7%, transparent);
+}
+
+.spotify-furigana-app__segment.is-active {
+  border-color: var(--spice-button);
+  color: #000;
+  background: var(--spice-button);
+}
+
+.spotify-furigana-app__sliders {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.spotify-furigana-app__slider {
+  min-width: 0;
+}
+
+.spotify-furigana-app__slider-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.spotify-furigana-app__slider output {
+  color: var(--spice-subtext);
+  font-variant-numeric: tabular-nums;
+}
+
+.spotify-furigana-app__slider input {
+  width: 100%;
+  accent-color: var(--spice-button);
+  cursor: pointer;
+}
+
+.spotify-furigana-app__status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 18px;
+  color: var(--spice-subtext);
+  font-size: 13px;
+}
+
+.spotify-furigana-app__status > span:first-child {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.spotify-furigana-app__status .is-ready {
+  background: var(--spice-button);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--spice-button) 20%, transparent);
+}
+
+.spotify-furigana-app__status .is-error {
+  background: #f15e6c;
+}
+
 .spotify-furigana-app__hint {
   margin-top: 18px;
   color: var(--spice-subtext);
   font-size: 13px;
   line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .spotify-furigana-app__sliders {
+    grid-template-columns: 1fr;
+  }
+
+  .spotify-furigana-app__panel-heading {
+    align-items: center;
+  }
 }

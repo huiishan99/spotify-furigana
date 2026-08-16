@@ -9,7 +9,7 @@
 <h1 align="center">Furigana for Spotify</h1>
 
 <p align="center">
-  <strong>在 Windows Spotify 桌面歌词上，为日语汉字实时显示振假名。</strong>
+  <strong>在 Windows Spotify 桌面歌词上，为日语汉字实时显示平假名、片假名或罗马字读音。</strong>
   <br />
   本地处理 · 无需歌词 API · 不上传歌词
 </p>
@@ -51,6 +51,7 @@
 
 - **跟随原生歌词**：自动处理当前桌面歌词页，并兼容已知的全屏歌词布局。
 - **完全本地运行**：Kuroshiro + Kuromoji 在电脑上完成分词与读音转换。
+- **自由调整显示**：可切换平假名、片假名与罗马字，并调整字号、透明度和上下间距。
 - **不接管歌词来源**：只增强 Spotify 当前显示的文本，不抓取、保存或重新分发歌词。
 - **随时开关**：通过播放器底部的歌词图标按钮，或左侧插件页面控制。
 - **安全插入 DOM**：只生成经过白名单处理的 `<ruby>`、`<rt>` 和 `<rp>` 节点。
@@ -71,6 +72,8 @@
 | Spicetify | 2.44.0 |
 
 其他版本可能也能工作，但尚未逐一验证。
+
+请查看[兼容性矩阵](./COMPATIBILITY.md)，其中明确区分实机验证与自动化歌词布局覆盖。
 
 ## 安装
 
@@ -125,6 +128,18 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 
 更新前，安装器会把旧版本保留为带时间戳的备份。
 
+## 调整注音显示
+
+从 Spotify 左侧边栏打开 **Furigana for Spotify**，可以：
+
+- 在平假名、片假名和罗马字之间切换；
+- 将注音字号调整为 30%–75%；
+- 将透明度调整为 40%–100%；
+- 增加最多 8 px 的上下间距；
+- 一键恢复默认显示。
+
+设置会保存在本地并立即生效。切换读音形式会重新生成当前可见歌词；外观滑块不需要重新运行分词器。
+
 ## 卸载
 
 ```powershell
@@ -138,7 +153,7 @@ Spotify 歌词 DOM
         ↓
 识别含汉字的歌词行
         ↓
-Kuroshiro + Kuromoji 本地转换
+Kuroshiro + Kuromoji 转换为所选读音形式
         ↓
 安全生成 <ruby> / <rt> 注音
 ```
@@ -187,11 +202,13 @@ npm run package
 
 ## 路线图
 
-- [ ] 调整振假名字号、透明度和间距
-- [ ] 片假名与罗马字显示模式
+- [x] 调整注音字号、透明度和上下间距
+- [x] 平假名、片假名与罗马字显示模式
 - [x] 一条命令安装与更新
-- [ ] 更多 Spotify / Spicetify 版本验证
-- [ ] Spicetify Marketplace 发布
+- [x] 公开兼容性矩阵及当前/旧版歌词布局自动化覆盖
+- [x] 发布到 Spicetify Marketplace 发现机制
+
+最初的 v0.1 路线图已经全部完成。后续功能通过 [GitHub Issues](https://github.com/huiishan99/spotify-furigana/issues) 跟踪，新的实机验证结果会加入[兼容性矩阵](./COMPATIBILITY.md)。
 
 ## 参与贡献
 

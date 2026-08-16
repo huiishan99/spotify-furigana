@@ -9,7 +9,7 @@
 <h1 align="center">Furigana for Spotify</h1>
 
 <p align="center">
-  <strong>Show furigana above Japanese kanji in Spotify lyrics on Windows.</strong>
+  <strong>Show hiragana, katakana, or romaji readings above Japanese kanji in Spotify lyrics on Windows.</strong>
   <br />
   Local processing · No lyrics API · No lyrics uploaded
 </p>
@@ -51,6 +51,7 @@ The extension enhances lyrics already displayed by Spotify and uses standard HTM
 
 - **Works with Spotify's lyrics view**: automatically processes the current desktop layout and known fullscreen lyrics layouts.
 - **Runs entirely on your machine**: Kuroshiro + Kuromoji perform tokenization and reading conversion locally.
+- **Choose how readings appear**: switch between hiragana, katakana, and romaji, then tune size, opacity, and vertical spacing.
 - **Does not replace the lyrics source**: it only enhances text already visible in Spotify and does not fetch, store, or redistribute lyrics.
 - **Easy to toggle**: use the lyrics button in the player bar or the custom app page in the sidebar.
 - **Safe DOM output**: only allowlisted `<ruby>`, `<rt>`, and `<rp>` nodes are created.
@@ -71,6 +72,8 @@ Verified on real hardware with:
 | Spicetify | 2.44.0 |
 
 Other versions may work, but have not been individually verified.
+
+See the [compatibility matrix](./docs/COMPATIBILITY.md) for the distinction between real-client verification and automated layout coverage.
 
 ## Install
 
@@ -125,6 +128,18 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 
 The installer preserves the previous installation as a timestamped backup before updating it.
 
+## Customize the readings
+
+Open **Furigana for Spotify** from Spotify's sidebar. The settings page lets you:
+
+- switch between hiragana, katakana, and romaji readings;
+- adjust reading size from 30% to 75%;
+- adjust opacity from 40% to 100%;
+- add up to 8 px of vertical spacing;
+- restore the display defaults with one click.
+
+Changes are saved locally and apply immediately. Switching the reading mode rebuilds the currently visible annotations; appearance sliders update without rerunning the tokenizer.
+
 ## Uninstall
 
 ```powershell
@@ -138,7 +153,7 @@ Spotify lyrics DOM
         ↓
 Find lyric lines containing kanji
         ↓
-Convert locally with Kuroshiro + Kuromoji
+Convert to the selected reading mode with Kuroshiro + Kuromoji
         ↓
 Build safe <ruby> / <rt> annotations
 ```
@@ -163,7 +178,8 @@ Key files:
 
 - `src/extension.ts`: observes the lyrics DOM, manages the toggle, and updates lyric lines.
 - `src/lyrics.ts`: contains selectors for current and legacy Spotify lyrics layouts.
-- `src/reading-engine.ts`: performs local reading conversion and builds safe DOM nodes.
+- `src/reading-engine.ts`: performs local hiragana, katakana, or romaji conversion and builds safe DOM nodes.
+- `src/settings.ts`: validates and persists the complete display configuration.
 - `scripts/build.mjs`: bundles the extension and copies the Kuromoji dictionary.
 
 The runtime, source, tests, build tooling, types, assets, and documentation already have clear boundaries, so the source directories do not need a cosmetic reorganization.
@@ -187,11 +203,13 @@ npm run package
 
 ## Roadmap
 
-- [ ] Furigana size, opacity, and spacing controls
-- [ ] Katakana and romaji display modes
+- [x] Furigana size, opacity, and spacing controls
+- [x] Hiragana, katakana, and romaji display modes
 - [x] One-command install and update script
-- [ ] Verification across more Spotify and Spicetify versions
-- [ ] Spicetify Marketplace release
+- [x] Public compatibility matrix and automated current/legacy layout coverage
+- [x] Spicetify Marketplace discovery publication
+
+The original v0.1 roadmap is complete. Future work is tracked through [GitHub Issues](https://github.com/huiishan99/spotify-furigana/issues) and confirmed-version reports are added to the [compatibility matrix](./docs/COMPATIBILITY.md).
 
 ## Contributing
 

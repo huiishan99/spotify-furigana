@@ -1,5 +1,15 @@
 # Devlog
 
+## 2026-08-16 — v0.2.0 roadmap completion
+
+- 完成平假名、片假名、罗马字三种注音模式；切换模式时会安全重建当前歌词，并用逐行转换代次避免快速切换产生旧结果覆盖新结果。
+- 设置页新增字号、透明度、上下间距滑块与一键恢复默认，全部通过 Spicetify LocalStorage 本地持久化并实时同步到播放器扩展。
+- 设置页新增 Spicetify 运行时状态和版本提示；播放栏开关与完整设置继续共享同一状态。
+- 新增设置默认值、非法值约束、完整持久化和三种读音输出测试；测试总数从 10 增加到 16。
+- 新增公开兼容性矩阵，明确区分实机验证与自动化布局覆盖；CI 同时在 Windows 和 Linux 上检查当前及旧版歌词选择器、类型、测试和生产构建。
+- 将原始路线图全部标记完成，并把版本提升为 `0.2.0`；Marketplace 发现所需的公开仓库、`spicetify-apps` topic 与根目录 manifest 已齐备。
+- 生成并校验 v0.2.0 Release ZIP；在本机安装时保留了旧版本备份，且确认已安装扩展与构建产物的 SHA-256 完全一致。
+
 ## 2026-08-16 — Open-source launch and discovery kit
 
 - 新增仓库根目录 Marketplace `manifest.json` 与 `spicetify-apps` 发布准备，使项目满足 Spicetify Marketplace 的发现元数据要求。

@@ -4,8 +4,9 @@ import {
   createSafeFuriganaFragment,
 } from "./reading-engine";
 import {
-  isFuriganaEnabled,
-  setFuriganaEnabled,
+  type FuriganaSettings,
+  getFuriganaSettings,
+  setFuriganaSettings,
   SETTING_CHANGE_EVENT,
 } from "./settings";
 import { LYRIC_SELECTOR } from "./lyrics";
@@ -30,10 +31,12 @@ function injectStyles(): void {
 
     [data-spotify-furigana="ready"] ruby.spotify-furigana__ruby rt {
       color: inherit;
-      font-size: 0.46em;
+      font-size: var(--spotify-furigana-size, 0.46em);
       font-weight: 500;
       line-height: 1;
-      opacity: 0.82;
+      opacity: var(--spotify-furigana-opacity, 0.82);
+      position: relative;
+      top: calc(-1 * var(--spotify-furigana-gap, 0px));
       user-select: none;
     }
 
@@ -42,6 +45,16 @@ function injectStyles(): void {
     }
   `;
   document.head.appendChild(style);
+}
+
+function applyAppearance(settings: FuriganaSettings): void {
+  const rootStyle = document.documentElement.style;
+  rootStyle.setProperty("--spotify-furigana-size", `${settings.size}em`);
+  rootStyle.setProperty(
+    "--spotify-furigana-opacity",
+    String(settings.opacity),
+  );
+  rootStyle.setProperty("--spotify-furigana-gap", `${settings.gap}px`);
 }
 
 function isSpicetifyReady(): boolean {
@@ -68,8 +81,11 @@ async function main(): Promise<void> {
   const dictionaryPath = getDictionaryPath();
   const originalNodes = new WeakMap<HTMLElement, Node[]>();
   const sourceText = new WeakMap<HTMLElement, string>();
+  const lineGeneration = new WeakMap<HTMLElement, number>();
 
-  let enabled = isFuriganaEnabled();
+  let settings = getFuriganaSettings();
+  let enabled = settings.enabled;
+  let generationCounter = 0;
   let engineUnavailable = false;
   let scanFrame: number | undefined;
   let reportedEngineError = false;
@@ -78,6 +94,7 @@ async function main(): Promise<void> {
     line.removeAttribute(STATE_ATTRIBUTE);
     originalNodes.delete(line);
     sourceText.delete(line);
+    lineGeneration.delete(line);
   }
 
   function restoreLine(line: HTMLElement): void {
@@ -132,10 +149,21 @@ async function main(): Promise<void> {
 
     originalNodes.set(line, Array.from(line.childNodes));
     sourceText.set(line, source);
+    const generation = ++generationCounter;
+    lineGeneration.set(line, generation);
     line.setAttribute(STATE_ATTRIBUTE, "pending");
 
     try {
-      const converted = await convertToFurigana(source, dictionaryPath);
+      const converted = await convertToFurigana(
+        source,
+        dictionaryPath,
+        settings.readingMode,
+      );
+
+      if (lineGeneration.get(line) !== generation) {
+        return;
+      }
+
       const currentText = normalizeLyricText(line.textContent);
 
       if (!line.isConnected || currentText !== source) {
@@ -158,6 +186,10 @@ async function main(): Promise<void> {
       );
       line.setAttribute(STATE_ATTRIBUTE, "ready");
     } catch (error: unknown) {
+      if (lineGeneration.get(line) !== generation) {
+        return;
+      }
+
       engineUnavailable = true;
       restoreLine(line);
       if (!reportedEngineError) {
@@ -185,24 +217,37 @@ async function main(): Promise<void> {
     }
   }
 
-  function applyEnabled(
-    nextEnabled: boolean,
+  function applySettings(
+    nextSettings: FuriganaSettings,
     announce = false,
     broadcast = false,
   ): void {
-    if (nextEnabled === enabled) {
+    const enabledChanged = nextSettings.enabled !== enabled;
+    const readingModeChanged = nextSettings.readingMode !== settings.readingMode;
+    const appearanceChanged =
+      nextSettings.size !== settings.size ||
+      nextSettings.opacity !== settings.opacity ||
+      nextSettings.gap !== settings.gap;
+
+    if (!enabledChanged && !readingModeChanged && !appearanceChanged) {
       return;
     }
 
-    enabled = nextEnabled;
-    setFuriganaEnabled(enabled);
+    settings = nextSettings;
+    enabled = settings.enabled;
+    setFuriganaSettings(settings);
+    applyAppearance(settings);
     playbarButton.active = enabled;
     playbarButton.label = enabled ? "关闭歌词振假名" : "开启歌词振假名";
 
-    if (enabled) {
+    if (readingModeChanged) {
+      restoreAll();
+    }
+
+    if (enabled && (enabledChanged || readingModeChanged)) {
       engineUnavailable = false;
       scheduleScan();
-    } else {
+    } else if (!enabled && enabledChanged) {
       restoreAll();
     }
 
@@ -215,7 +260,7 @@ async function main(): Promise<void> {
     if (broadcast) {
       window.dispatchEvent(
         new CustomEvent(SETTING_CHANGE_EVENT, {
-          detail: { enabled },
+          detail: { enabled, settings },
         }),
       );
     }
@@ -224,16 +269,16 @@ async function main(): Promise<void> {
   const playbarButton = new Spicetify.Playbar.Button(
     enabled ? "关闭歌词振假名" : "开启歌词振假名",
     "lyrics",
-    () => applyEnabled(!enabled, true, true),
+    () =>
+      applySettings({ ...settings, enabled: !enabled }, true, true),
     false,
     enabled,
   );
 
   window.addEventListener(SETTING_CHANGE_EVENT, (event) => {
-    const nextEnabled = (event as CustomEvent<{ enabled?: unknown }>).detail
-      ?.enabled;
-    if (typeof nextEnabled === "boolean") {
-      applyEnabled(nextEnabled);
+    const detail = (event as CustomEvent<{ settings?: unknown }>).detail;
+    if (detail?.settings !== settings) {
+      applySettings(getFuriganaSettings());
     }
   });
 
@@ -244,6 +289,7 @@ async function main(): Promise<void> {
     subtree: true,
   });
 
+  applyAppearance(settings);
   scheduleScan();
 }
 

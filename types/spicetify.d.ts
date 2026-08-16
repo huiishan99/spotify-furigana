@@ -6,6 +6,10 @@ interface SpicetifyPlaybarButton {
 }
 
 interface SpicetifyGlobal {
+  Config?: {
+    version?: string;
+    custom_apps?: string[];
+  };
   Platform: unknown;
   Player: unknown;
   LocalStorage: {
