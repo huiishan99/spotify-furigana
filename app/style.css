@@ -1,0 +1,70 @@
+.spotify-furigana-app {
+  max-width: 760px;
+  padding-bottom: 64px;
+}
+
+.spotify-furigana-app__eyebrow {
+  margin: 0 0 8px;
+  color: var(--spice-subtext);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.spotify-furigana-app h1 {
+  margin: 0;
+  font-size: clamp(36px, 6vw, 64px);
+  line-height: 1.05;
+}
+
+.spotify-furigana-app__lead {
+  max-width: 620px;
+  margin: 20px 0 32px;
+  color: var(--spice-subtext);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.spotify-furigana-app__card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px;
+  border: 1px solid color-mix(in srgb, var(--spice-text) 12%, transparent);
+  border-radius: 14px;
+  background: var(--spice-card);
+}
+
+.spotify-furigana-app__card strong {
+  font-size: 17px;
+}
+
+.spotify-furigana-app__card p {
+  margin: 5px 0 0;
+  color: var(--spice-subtext);
+}
+
+.spotify-furigana-app__toggle {
+  min-width: 88px;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 999px;
+  color: #000;
+  background: var(--spice-button);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.spotify-furigana-app__toggle:hover {
+  transform: scale(1.04);
+}
+
+.spotify-furigana-app__hint {
+  margin-top: 18px;
+  color: var(--spice-subtext);
+  font-size: 13px;
+  line-height: 1.6;
+}

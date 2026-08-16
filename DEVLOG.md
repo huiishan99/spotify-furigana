@@ -1,5 +1,14 @@
 # Devlog
 
+## 2026-08-16 — 改为 Windows Spotify 桌面端
+
+- 根据需求澄清，将目标从 Spotify Web Player 浏览器扩展改为 Windows Spotify 桌面客户端。
+- 使用 Spicetify Custom App 的 `subfiles_extension` 在 Spotify 启动时加载歌词增强逻辑。
+- 增加播放器底部快速开关和侧边栏设置页面，状态通过 Spicetify LocalStorage 保存。
+- 将 Kuromoji 词典打包为 Custom App 本地 assets，继续保持歌词不上传。
+- 新增 esbuild 桌面插件构建流程、资源路径测试和 Windows 手动安装说明。
+- 当前机器安装的是 Microsoft Store 版 Spotify，且未安装 Spicetify；已完成静态验证，但尚未完成桌面端实际注入验证。
+
 ## 2026-08-16 — MVP scaffold
 
 - 选择 WXT + TypeScript 构建 Manifest V3 浏览器扩展。

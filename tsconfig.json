@@ -1,16 +1,19 @@
 {
-  "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node", "vitest/globals"],
+    "noEmit": true,
     "strict": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true
   },
   "include": [
-    ".wxt/wxt.d.ts",
-    "entrypoints/**/*.ts",
     "src/**/*.ts",
     "tests/**/*.ts",
     "types/**/*.d.ts",
-    "wxt.config.ts",
     "vitest.config.ts"
   ]
 }

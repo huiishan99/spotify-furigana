@@ -1,20 +1,22 @@
 import Kuroshiro from "kuroshiro";
 import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
-import { browser } from "wxt/browser";
 
 let enginePromise: Promise<Kuroshiro> | undefined;
+let activeDictionaryPath: string | undefined;
 
-async function createEngine(): Promise<Kuroshiro> {
+async function createEngine(dictionaryPath: string): Promise<Kuroshiro> {
   const engine = new Kuroshiro();
-  const dictionaryAsset = browser.runtime.getURL("/kuromoji/base.dat.gz");
-  const dictPath = dictionaryAsset.slice(0, dictionaryAsset.lastIndexOf("/") + 1);
-
-  await engine.init(new KuromojiAnalyzer({ dictPath }));
+  await engine.init(new KuromojiAnalyzer({ dictPath: dictionaryPath }));
   return engine;
 }
 
-function getEngine(): Promise<Kuroshiro> {
-  enginePromise ??= createEngine().catch((error: unknown) => {
+function getEngine(dictionaryPath: string): Promise<Kuroshiro> {
+  if (activeDictionaryPath !== dictionaryPath) {
+    activeDictionaryPath = dictionaryPath;
+    enginePromise = undefined;
+  }
+
+  enginePromise ??= createEngine(dictionaryPath).catch((error: unknown) => {
     enginePromise = undefined;
     throw error;
   });
@@ -22,8 +24,11 @@ function getEngine(): Promise<Kuroshiro> {
   return enginePromise;
 }
 
-export async function convertToFurigana(value: string): Promise<string> {
-  const engine = await getEngine();
+export async function convertToFurigana(
+  value: string,
+  dictionaryPath: string,
+): Promise<string> {
+  const engine = await getEngine(dictionaryPath);
   return engine.convert(value, {
     mode: "furigana",
     to: "hiragana",
