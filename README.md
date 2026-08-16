@@ -1,72 +1,164 @@
-# Spotify Furigana
+<p align="center">
+  <img src="./assets/logo.png" alt="Furigana for Spotify logo" width="168" />
+</p>
 
-一个为 **Windows Spotify 桌面客户端**日语歌词添加振假名（ふりがな）的 [Spicetify](https://spicetify.app/) 插件。
+<h1 align="center">Furigana for Spotify</h1>
 
-听日语歌时，插件会识别 Spotify 桌面端歌词页面中的汉字，并把平假名读音显示在汉字上方。分词和读音转换完全在电脑本地完成，不上传歌词。
+<p align="center">
+  <strong>在 Windows Spotify 桌面歌词上，为日语汉字实时显示振假名。</strong>
+  <br />
+  本地处理 · 无需歌词 API · 不上传歌词
+</p>
 
-## 当前状态
+<p align="center">
+  <a href="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml/badge.svg" /></a>
+  <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-4F46E5" />
+  <img alt="Spicetify 2.44 tested" src="https://img.shields.io/badge/Spicetify-2.44%20tested-F97366" />
+  <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-4338CA" /></a>
+</p>
 
-这是一个可构建、可手动安装的 Windows 桌面端 MVP：
+> [!IMPORTANT]
+> 这是独立社区项目，与 Spotify AB 没有关联，也未获得其赞助或认可。项目不使用 Spotify 官方 logo。
 
-- 自动识别 Spotify 普通歌词视图和全屏歌词视图
-- 使用 Kuromoji 做日语形态分析
-- 使用标准 HTML `<ruby>` / `<rt>` 显示振假名
-- 可在播放器底部按钮或插件页面随时开关
-- 字典随 Spicetify Custom App 打包，运行时不依赖第三方读音 API
+## 效果
 
-## 本地安装
+插件直接增强 Spotify 已经显示的歌词，把汉字转换为标准 HTML `<ruby>` 注音：
 
-需要 Node.js 22 或更高版本，并先按照 [Spicetify 官方文档](https://spicetify.app/docs/getting-started)安装 Spicetify。
+| 原歌词 | 开启振假名后 |
+| --- | --- |
+| 声も聞かさないで | <ruby>声<rt>こえ</rt></ruby>も<ruby>聞<rt>き</rt></ruby>かさないで |
+| 明日は晴れる | <ruby>明日<rt>あした</rt></ruby>は<ruby>晴<rt>は</rt></ruby>れる |
 
-```bash
-npm install
+## 为什么用它
+
+- **跟随原生歌词**：自动处理当前桌面歌词页，并兼容已知的全屏歌词布局。
+- **完全本地运行**：Kuroshiro + Kuromoji 在电脑上完成分词与读音转换。
+- **不接管歌词来源**：只增强 Spotify 当前显示的文本，不抓取、保存或重新分发歌词。
+- **随时开关**：通过播放器底部的歌词图标按钮，或左侧插件页面控制。
+- **安全插入 DOM**：只生成经过白名单处理的 `<ruby>`、`<rt>` 和 `<rp>` 节点。
+
+## 环境要求
+
+- Windows 10 或 Windows 11
+- Windows Spotify 桌面客户端
+- [Spicetify](https://spicetify.app/docs/getting-started)
+- Node.js 22 或更高版本（仅构建时需要）
+
+当前已实机验证：
+
+| 组件 | 验证版本 |
+| --- | --- |
+| Windows | Windows 11 Pro 10.0.26200 |
+| Spotify | Microsoft Store 版 1.2.96.518 |
+| Spicetify | 2.44.0 |
+
+其他版本可能也能工作，但尚未逐一验证。
+
+## 安装
+
+### 1. 获取并构建
+
+```powershell
+git clone https://github.com/huiishan99/spotify-furigana.git
+Set-Location spotify-furigana
+npm ci
 npm run build
 ```
 
-构建结果位于 `dist/spotify-furigana/`。然后在 PowerShell 中运行：
+### 2. 安装到 Spicetify
 
 ```powershell
 $target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
 New-Item -ItemType Directory -Force $target | Out-Null
 Copy-Item -Recurse -Force "dist\spotify-furigana\*" $target
+
 spicetify config custom_apps spotify-furigana
 spicetify apply
 ```
 
-重启 Spotify，播放一首有歌词的日语歌曲并进入歌词视图。插件也会出现在左侧栏，播放器底部的歌词按钮可快速开关注音。
+重新启动 Spotify，播放一首带歌词的日语歌曲，然后打开歌词页面。第一次转换时，本地词典需要短暂加载。
 
-> 注意：Spicetify 官方 FAQ 指出，若无法识别 Microsoft Store 版 Spotify，需卸载该版本并改装 [spotify.com](https://www.spotify.com/download/windows/) 提供的普通 Windows 安装版。
+> [!NOTE]
+> Microsoft Store 版 Spotify 只受到 Spicetify 的部分支持。若普通快捷方式没有加载插件，请使用 `spicetify auto` 启动；若遇到 `Cannot find pref_file`，请参阅 [Spicetify FAQ](https://spicetify.app/docs/faq)。
 
-首次遇到日语歌词时，需要短暂加载本地词典。人名、特殊读法、双关语和刻意变化的歌词可能仍会标错。
+## 更新
+
+```powershell
+git pull
+npm ci
+npm run build
+
+$target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
+Copy-Item -Recurse -Force "dist\spotify-furigana\*" $target
+spicetify apply
+```
+
+## 卸载
+
+```powershell
+spicetify config custom_apps spotify-furigana-
+spicetify apply
+```
+
+## 工作原理
+
+```text
+Spotify 歌词 DOM
+        ↓
+识别含汉字的歌词行
+        ↓
+Kuroshiro + Kuromoji 本地转换
+        ↓
+安全生成 <ruby> / <rt> 注音
+```
+
+关键代码：
+
+- `src/extension.ts`：观察歌词 DOM、管理开关并更新歌词行。
+- `src/lyrics.ts`：维护新旧 Spotify 歌词布局选择器。
+- `src/reading-engine.ts`：本地读音转换与安全 DOM 构建。
+- `app/`：Spicetify Custom App 页面、样式和 manifest。
+- `scripts/build.mjs`：打包扩展并复制 Kuromoji 词典。
 
 ## 开发
 
-```bash
-npm run check     # TypeScript、单元测试、生产构建
-npm run build     # 生成可安装的 Spicetify Custom App
+```powershell
+npm ci
+npm run check
 ```
 
-主要入口：
+`npm run check` 会依次执行 TypeScript 检查、Vitest 测试和生产构建。
 
-- `src/extension.ts`：全局观察 Spotify 桌面端歌词 DOM 并添加振假名
-- `src/reading-engine.ts`：本地读音转换和安全的 ruby DOM 构建
-- `app/`：Spicetify Custom App 页面、样式和 manifest
-- `scripts/build.mjs`：打包扩展并复制 Kuromoji 字典
+## 已知限制
 
-## 隐私与边界
-
-- 插件只读取 Spotify 桌面端当前已经显示的歌词 DOM。
-- 插件不读取账号凭据，不记录播放历史，不向外部服务发送歌词。
-- 插件不会抓取、保存或重新分发 Spotify 歌词，只增强当前页面已经显示的文本。
-- Spotify 或 Spicetify 的页面结构可能变化；如果选择器失效，请提交 issue 并附上 Spotify 与 Spicetify 版本，不要附上账号信息。
+- 人名、地名、歌词双关和刻意变化的读法可能标注错误。
+- Spotify 更新可能改变歌词 DOM；若插件突然失效，请在 issue 中附上 Spotify 与 Spicetify 版本。
+- 当前只面向 Windows Spotify 桌面客户端，不支持 Web Player、macOS 或移动端。
 
 ## 路线图
 
-- 在真实 Windows Spotify + Spicetify 环境覆盖更多歌词布局
-- 增加振假名字号和透明度设置
-- 增加片假名/罗马字显示选项
-- 准备 Spicetify Marketplace 发布所需图标、截图和清单
+- [ ] 调整振假名字号、透明度和间距
+- [ ] 片假名与罗马字显示模式
+- [ ] 一键安装与更新脚本
+- [ ] 更多 Spotify / Spicetify 版本验证
+- [ ] Spicetify Marketplace 发布
+
+## 参与贡献
+
+Issue 和 Pull Request 都欢迎。提交前请先运行：
+
+```powershell
+npm run check
+```
+
+报告兼容性问题时，请提供 Spotify 版本、Spicetify 版本、歌词视图类型，以及不包含账号信息的控制台错误。请不要粘贴完整歌词。
+
+## 商标声明
+
+Furigana for Spotify 是一个独立开源项目。Spotify、Spotify logo 及相关品牌元素是 Spotify AB 的商标。本项目与 Spotify AB 没有关联，也未获得其赞助或认可。“for Spotify”仅用于说明兼容平台。
+
+项目图标为原创设计，使用“ふ”、注音条和音符表达日语歌词辅助功能，并刻意避开 Spotify 官方品牌规范中列出的绿色、圆形和波纹元素。参见 [Spotify Design & Branding Guidelines](https://developer.spotify.com/documentation/design)。
 
 ## License
 
-[MIT](LICENSE)
+[MIT](./LICENSE)

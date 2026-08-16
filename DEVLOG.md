@@ -1,5 +1,12 @@
 # Devlog
 
+## 2026-08-16 — Open-source README and original branding
+
+- 重写 README，加入项目视觉头图、状态徽章、效果示例、快速安装、更新/卸载、工作原理、兼容性范围与贡献指引。
+- 新增原创透明背景图标，以“ふ”、注音条和音符表达日语歌词辅助功能，并避开 Spotify 的绿色、圆形和波纹品牌元素。
+- 将用户可见名称统一为 `Furigana for Spotify`，并增加独立项目与商标免责声明，避免暗示官方关联。
+- 保持仓库现有可见性不变，公开前由仓库所有者最终确认。
+
 ## 2026-08-16 — Spotify 1.2.96 runtime selector fix
 
 - 在 Microsoft Store Spotify 1.2.96.518 + Spicetify 2.44.0 中完成真实运行时诊断。

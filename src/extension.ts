@@ -162,8 +162,8 @@ async function main(): Promise<void> {
       restoreLine(line);
       if (!reportedEngineError) {
         reportedEngineError = true;
-        console.warn("[Spotify Furigana] Reading engine failed to load.", error);
-        Spicetify.showNotification("Spotify Furigana 词典加载失败", true);
+        console.warn("[Furigana for Spotify] Reading engine failed to load.", error);
+        Spicetify.showNotification("Furigana 词典加载失败", true);
       }
     }
   }

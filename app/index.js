@@ -33,7 +33,7 @@ function SpotifyFuriganaApp() {
     "section",
     { className: "contentSpacing spotify-furigana-app" },
     react.createElement("p", { className: "spotify-furigana-app__eyebrow" }, "日本語歌词辅助"),
-    react.createElement("h1", null, "Spotify Furigana"),
+    react.createElement("h1", null, "Furigana for Spotify"),
     react.createElement(
       "p",
       { className: "spotify-furigana-app__lead" },
