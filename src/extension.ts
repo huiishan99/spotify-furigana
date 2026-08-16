@@ -10,6 +10,7 @@ import {
   SETTING_CHANGE_EVENT,
 } from "./settings";
 import { LYRIC_SELECTOR } from "./lyrics";
+import { PLAYBAR_FU_ICON } from "./icon";
 import { normalizeLyricText, shouldAnnotateLyric } from "./text";
 
 const STATE_ATTRIBUTE = "data-spotify-furigana";
@@ -268,7 +269,7 @@ async function main(): Promise<void> {
 
   const playbarButton = new Spicetify.Playbar.Button(
     enabled ? "关闭歌词振假名" : "开启歌词振假名",
-    "lyrics",
+    PLAYBAR_FU_ICON,
     () =>
       applySettings({ ...settings, enabled: !enabled }, true, true),
     false,
