@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="640" viewBox="0 0 1280 640">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071017" />
+      <stop offset="0.62" stop-color="#08151b" />
+      <stop offset="1" stop-color="#03251f" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0.76" cy="0.18" r="0.72">
+      <stop offset="0" stop-color="#00dba1" stop-opacity="0.34" />
+      <stop offset="1" stop-color="#00dba1" stop-opacity="0" />
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity="0.48" />
+    </filter>
+    <clipPath id="screenshot"><rect x="682" y="52" width="548" height="536" rx="28" /></clipPath>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#background)" />
+  <rect width="1280" height="640" fill="url(#glow)" />
+  <circle cx="114" cy="536" r="176" fill="#00dba1" opacity="0.055" />
+  <path d="M0 606 C262 520 440 716 694 592 C908 488 1056 542 1280 452 V640 H0 Z" fill="#00dba1" opacity="0.04" />
+
+  <image x="66" y="58" width="132" height="132" xlink:href="../logo.png" />
+  <text x="224" y="104" fill="#f6f5ef" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="29" font-weight="750">Furigana for Spotify</text>
+  <text x="224" y="143" fill="#7fe9cb" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="18" font-weight="650" letter-spacing="2.2">LOCAL JAPANESE LYRIC READINGS</text>
+
+  <text x="68" y="286" fill="#f8f7f2" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="61" font-weight="780" letter-spacing="-2">
+    <tspan x="68" dy="0">Japanese lyrics,</tspan>
+    <tspan x="68" dy="72">now readable.</tspan>
+  </text>
+  <text x="70" y="462" fill="#b8c5c3" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="23" font-weight="450">
+    Real-time furigana for Spotify on Windows.
+  </text>
+
+  <g transform="translate(68 510)">
+    <rect width="470" height="54" rx="27" fill="#0e2824" stroke="#1f6b59" />
+    <circle cx="28" cy="27" r="7" fill="#00dba1" />
+    <text x="48" y="35" fill="#d9f7ee" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="17" font-weight="700" letter-spacing="1.1">100% LOCAL  ·  NO UPLOADS  ·  SPICETIFY</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="662" y="32" width="588" height="576" rx="36" fill="#10181d" stroke="#2b4f48" stroke-width="2" />
+    <image x="413" y="52" width="992" height="539" preserveAspectRatio="xMidYMid slice" clip-path="url(#screenshot)" xlink:href="../screenshots/lyrics-view.png" />
+    <rect x="682" y="52" width="548" height="536" rx="28" fill="none" stroke="#00dba1" stroke-opacity="0.28" />
+  </g>
+
+  <g transform="translate(913 74)">
+    <rect width="278" height="48" rx="24" fill="#07120f" fill-opacity="0.92" stroke="#00dba1" stroke-opacity="0.72" />
+    <text x="139" y="31" text-anchor="middle" fill="#80f0d0" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="16" font-weight="750" letter-spacing="1.5">ふりがな · FURIGANA</text>
+  </g>
+</svg>

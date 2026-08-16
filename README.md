@@ -16,6 +16,8 @@
 
 <p align="center">
   <a href="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/huiishan99/spotify-furigana?display_name=tag&amp;label=release&amp;color=00A77D" /></a>
+  <a href="https://github.com/huiishan99/spotify-furigana/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/huiishan99/spotify-furigana?style=flat&amp;logo=github&amp;color=00A77D" /></a>
   <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-4F46E5" />
   <img alt="Spotify Desktop 1.2.96 tested" src="https://img.shields.io/badge/Spotify%20Desktop-1.2.96%20tested-16A34A?logo=spotify&amp;logoColor=1ED760&amp;labelColor=191414" />
   <img alt="Spicetify 2.44 tested" src="https://img.shields.io/badge/Spicetify-2.44%20tested-F97366" />
@@ -25,14 +27,17 @@
 > [!IMPORTANT]
 > This is an independent community project. It is not affiliated with, sponsored by, or endorsed by Spotify AB. The project mark does not use the official Spotify logo; the mark inside the compatibility badge only identifies the target platform.
 
+> [!TIP]
+> If this project helps you read even one Japanese song more comfortably, consider [giving it a star](https://github.com/huiishan99/spotify-furigana). Stars help other Japanese learners discover it.
+
 ## See it in action
 
 <p align="center">
-  <img src="./assets/screenshots/lyrics-view.png" alt="Live Japanese furigana displayed in Spotify lyrics on Windows" width="100%" />
+  <img src="./assets/marketing/demo.gif" alt="Animated close-up of live Japanese furigana displayed in Spotify lyrics on Windows" width="100%" />
 </p>
 
 <p align="center">
-  <sub>Captured on Windows 11 · Spotify 1.2.96.518 · Spicetify 2.44.0. Lyrics, artwork, and Spotify UI elements belong to their respective rights holders and appear here only to demonstrate the extension.</sub>
+  <sub>Animated from a real capture on Windows 11 · Spotify 1.2.96.518 · Spicetify 2.44.0. <a href="./assets/screenshots/lyrics-view.png">View the full screenshot.</a> Lyrics, artwork, and Spotify UI elements belong to their respective rights holders and appear here only to demonstrate the extension.</sub>
 </p>
 
 The extension enhances lyrics already displayed by Spotify and uses standard HTML `<ruby>` annotations to place readings above kanji.
@@ -71,6 +76,10 @@ Other versions may work, but have not been individually verified.
 
 ### Release package (recommended)
 
+<p>
+  <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="Download the latest release" src="https://img.shields.io/badge/Download-latest%20release-00A77D?style=for-the-badge&amp;logo=github" /></a>
+</p>
+
 1. Download `spotify-furigana-vX.Y.Z.zip` from the [latest release](https://github.com/huiishan99/spotify-furigana/releases/latest).
 2. Extract the ZIP completely.
 3. Open PowerShell in the extracted folder and run:
@@ -108,21 +117,18 @@ Restart Spotify, play a Japanese song with lyrics, and open the lyrics view. The
 
 ## Update
 
-```powershell
-git pull
-npm ci
-npm run build
+Download and extract the newest Release ZIP, then run its installer again:
 
-$target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
-Copy-Item -Recurse -Force "dist\spotify-furigana\*" $target
-spicetify apply
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
+
+The installer preserves the previous installation as a timestamped backup before updating it.
 
 ## Uninstall
 
 ```powershell
-spicetify config custom_apps spotify-furigana-
-spicetify apply
+powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
 ## How it works
@@ -142,13 +148,14 @@ Build safe <ruby> / <rt> annotations
 ```text
 spotify-furigana/
 ├── app/          # Spicetify Custom App page, styles, and manifest
-├── assets/       # Project logo and live screenshots
+├── assets/       # Project logo, live screenshots, and launch artwork
 ├── docs/         # Chinese and Japanese README translations
 ├── packaging/    # Release installer, uninstaller, and offline instructions
 ├── scripts/      # Build and asset-copy scripts
 ├── src/          # Lyrics observer, selectors, settings, and reading engine
 ├── tests/        # Vitest unit tests
 ├── types/        # Kuroshiro and Spicetify type declarations
+├── manifest.json # Spicetify Marketplace discovery metadata
 └── README.md     # Canonical English entry point
 ```
 
@@ -166,10 +173,11 @@ The runtime, source, tests, build tooling, types, assets, and documentation alre
 ```powershell
 npm ci
 npm run check
+npm run marketing-assets
 npm run package
 ```
 
-`npm run check` runs TypeScript checks, Vitest, and the production build. `npm run package` creates the ready-to-install ZIP and SHA-256 checksum under the ignored `release/` directory.
+`npm run check` runs TypeScript checks, Vitest, and the production build. `npm run marketing-assets` deterministically rebuilds the social preview and animated demo from the original project logo and real screenshot. `npm run package` creates the ready-to-install ZIP and SHA-256 checksum under the ignored `release/` directory.
 
 ## Known limitations
 
@@ -181,19 +189,27 @@ npm run package
 
 - [ ] Furigana size, opacity, and spacing controls
 - [ ] Katakana and romaji display modes
-- [ ] One-command install and update script
+- [x] One-command install and update script
 - [ ] Verification across more Spotify and Spicetify versions
 - [ ] Spicetify Marketplace release
 
 ## Contributing
 
-Issues and pull requests are welcome. Before submitting a change, run:
+Issues and pull requests are welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a change, and use the compatibility report template when Spotify changes its lyrics layout.
+
+Before submitting a change, run:
 
 ```powershell
 npm run check
 ```
 
 For compatibility reports, include the Spotify version, Spicetify version, lyrics view type, and console errors with account information removed. Do not paste complete lyrics.
+
+Security issues should be reported privately as described in [SECURITY.md](./SECURITY.md).
+
+## Share the project
+
+The ready-to-post English, Chinese, and Japanese launch copy is available in [docs/LAUNCH_KIT.md](./docs/LAUNCH_KIT.md). If the extension helps you, a [GitHub star](https://github.com/huiishan99/spotify-furigana) or a thoughtful compatibility report is the most useful support.
 
 ## Trademark notice
 

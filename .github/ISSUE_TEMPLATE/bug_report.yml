@@ -1,0 +1,71 @@
+name: Compatibility or bug report
+description: Report a failure, regression, or incorrect behavior without sharing private data or complete lyrics.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please remove account details and do not paste complete lyrics.
+  - type: input
+    id: app-version
+    attributes:
+      label: Furigana for Spotify version
+      placeholder: v0.1.0
+    validations:
+      required: true
+  - type: input
+    id: spotify-version
+    attributes:
+      label: Spotify version and installation source
+      placeholder: 1.2.x, Microsoft Store or direct download
+    validations:
+      required: true
+  - type: input
+    id: spicetify-version
+    attributes:
+      label: Spicetify version
+      placeholder: 2.x.x
+    validations:
+      required: true
+  - type: dropdown
+    id: lyrics-view
+    attributes:
+      label: Lyrics view
+      options:
+        - Normal lyrics view
+        - Fullscreen lyrics view
+        - Both
+        - The extension does not load
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and reproduction steps
+      description: Include the shortest reliable sequence that reproduces the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Redacted diagnostics
+      description: Add a short console error or screenshot. Remove usernames, account data, tokens, and complete lyrics.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I tested the latest release.
+          required: true
+        - label: I removed private data and did not include complete lyrics.
+          required: true

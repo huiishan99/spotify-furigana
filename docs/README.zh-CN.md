@@ -16,6 +16,8 @@
 
 <p align="center">
   <a href="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="最新版本" src="https://img.shields.io/github/v/release/huiishan99/spotify-furigana?display_name=tag&amp;label=release&amp;color=00A77D" /></a>
+  <a href="https://github.com/huiishan99/spotify-furigana/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/huiishan99/spotify-furigana?style=flat&amp;logo=github&amp;color=00A77D" /></a>
   <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-4F46E5" />
   <img alt="Spotify Desktop 1.2.96 tested" src="https://img.shields.io/badge/Spotify%20Desktop-1.2.96%20tested-16A34A?logo=spotify&amp;logoColor=1ED760&amp;labelColor=191414" />
   <img alt="Spicetify 2.44 tested" src="https://img.shields.io/badge/Spicetify-2.44%20tested-F97366" />
@@ -25,14 +27,17 @@
 > [!IMPORTANT]
 > 这是独立社区项目，与 Spotify AB 没有关联，也未获得其赞助或认可。项目自身标志不使用 Spotify 官方 logo；兼容性徽章中的标识仅用于说明目标平台。
 
+> [!TIP]
+> 如果这个项目让你更轻松地读完哪怕一首日语歌，欢迎[给它一个 Star](https://github.com/huiishan99/spotify-furigana)。Star 能帮助更多日语学习者发现它。
+
 ## 效果
 
 <p align="center">
-  <img src="../assets/screenshots/lyrics-view.png" alt="Windows Spotify 歌词页面中的实时日语振假名效果" width="100%" />
+  <img src="../assets/marketing/demo.gif" alt="Windows Spotify 歌词页面中的实时日语振假名动态效果" width="100%" />
 </p>
 
 <p align="center">
-  <sub>实机截图：Windows 11 · Spotify 1.2.96.518 · Spicetify 2.44.0。歌词、封面及 Spotify 界面元素的权利归各自权利方所有，仅用于展示插件运行效果。</sub>
+  <sub>动图来自真实环境：Windows 11 · Spotify 1.2.96.518 · Spicetify 2.44.0。<a href="../assets/screenshots/lyrics-view.png">查看完整截图。</a>歌词、封面及 Spotify 界面元素的权利归各自权利方所有，仅用于展示插件运行效果。</sub>
 </p>
 
 插件直接增强 Spotify 已经显示的歌词，把汉字转换为标准 HTML `<ruby>` 注音：
@@ -71,6 +76,10 @@
 
 ### Release 安装包（推荐）
 
+<p>
+  <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="下载最新版本" src="https://img.shields.io/badge/下载-最新版本-00A77D?style=for-the-badge&amp;logo=github" /></a>
+</p>
+
 1. 从[最新 Release](https://github.com/huiishan99/spotify-furigana/releases/latest)下载 `spotify-furigana-vX.Y.Z.zip`。
 2. 完整解压 ZIP。
 3. 在解压目录中打开 PowerShell，运行：
@@ -108,21 +117,18 @@ spicetify apply
 
 ## 更新
 
-```powershell
-git pull
-npm ci
-npm run build
+下载并解压最新版 Release ZIP，然后再次运行其中的安装器：
 
-$target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
-Copy-Item -Recurse -Force "dist\spotify-furigana\*" $target
-spicetify apply
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
+
+更新前，安装器会把旧版本保留为带时间戳的备份。
 
 ## 卸载
 
 ```powershell
-spicetify config custom_apps spotify-furigana-
-spicetify apply
+powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
 ## 工作原理
@@ -142,13 +148,14 @@ Kuroshiro + Kuromoji 本地转换
 ```text
 spotify-furigana/
 ├── app/          # Spicetify Custom App 页面、样式与 manifest
-├── assets/       # 项目 Logo 与实机截图
+├── assets/       # 项目 Logo、实机截图与推广素材
 ├── docs/         # 中文、日文 README
 ├── packaging/    # Release 安装器、卸载器与离线说明
 ├── scripts/      # 构建与资源复制脚本
 ├── src/          # 歌词观察、选择器、设置与读音引擎
 ├── tests/        # Vitest 单元测试
 ├── types/        # Kuroshiro 与 Spicetify 类型声明
+├── manifest.json # Spicetify Marketplace 发现元数据
 └── README.md     # 英文默认入口
 ```
 
@@ -166,10 +173,11 @@ spotify-furigana/
 ```powershell
 npm ci
 npm run check
+npm run marketing-assets
 npm run package
 ```
 
-`npm run check` 会依次执行 TypeScript 检查、Vitest 测试和生产构建。`npm run package` 会在被 Git 忽略的 `release/` 目录中生成可直接安装的 ZIP 和 SHA-256 校验文件。
+`npm run check` 会依次执行 TypeScript 检查、Vitest 测试和生产构建。`npm run marketing-assets` 会使用项目原始 Logo 和真实截图，确定性地重新生成社交封面与演示动图。`npm run package` 会在被 Git 忽略的 `release/` 目录中生成可直接安装的 ZIP 和 SHA-256 校验文件。
 
 ## 已知限制
 
@@ -181,19 +189,27 @@ npm run package
 
 - [ ] 调整振假名字号、透明度和间距
 - [ ] 片假名与罗马字显示模式
-- [ ] 一键安装与更新脚本
+- [x] 一条命令安装与更新
 - [ ] 更多 Spotify / Spicetify 版本验证
 - [ ] Spicetify Marketplace 发布
 
 ## 参与贡献
 
-Issue 和 Pull Request 都欢迎。提交前请先运行：
+欢迎提交 Issue 和 Pull Request。提交改动前请阅读 [CONTRIBUTING.md](../CONTRIBUTING.md)；Spotify 更新歌词布局后，请优先使用兼容性报告模板。
+
+提交前请先运行：
 
 ```powershell
 npm run check
 ```
 
 报告兼容性问题时，请提供 Spotify 版本、Spicetify 版本、歌词视图类型，以及不包含账号信息的控制台错误。请不要粘贴完整歌词。
+
+安全问题请按照 [SECURITY.md](../SECURITY.md) 私下报告。
+
+## 分享项目
+
+[docs/LAUNCH_KIT.md](./LAUNCH_KIT.md) 已准备好中、日、英三种发布文案。如果插件对你有帮助，[给仓库一个 Star](https://github.com/huiishan99/spotify-furigana)或提交一份可靠的兼容性报告，就是最有价值的支持。
 
 ## 商标声明
 

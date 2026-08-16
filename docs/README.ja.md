@@ -16,6 +16,8 @@
 
 <p align="center">
   <a href="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="最新リリース" src="https://img.shields.io/github/v/release/huiishan99/spotify-furigana?display_name=tag&amp;label=release&amp;color=00A77D" /></a>
+  <a href="https://github.com/huiishan99/spotify-furigana/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/huiishan99/spotify-furigana?style=flat&amp;logo=github&amp;color=00A77D" /></a>
   <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-4F46E5" />
   <img alt="Spotify Desktop 1.2.96 tested" src="https://img.shields.io/badge/Spotify%20Desktop-1.2.96%20tested-16A34A?logo=spotify&amp;logoColor=1ED760&amp;labelColor=191414" />
   <img alt="Spicetify 2.44 tested" src="https://img.shields.io/badge/Spicetify-2.44%20tested-F97366" />
@@ -25,14 +27,17 @@
 > [!IMPORTANT]
 > 本プロジェクトは独立したコミュニティプロジェクトであり、Spotify ABとは関係がなく、同社による後援・承認も受けていません。プロジェクト独自のロゴにはSpotify公式ロゴを使用していません。互換性バッジ内のマークは対象プラットフォームを示すためだけに使用しています。
 
+> [!TIP]
+> このプロジェクトで一曲でも読みやすくなったら、ぜひ[Starを付けてください](https://github.com/huiishan99/spotify-furigana)。Starは、ほかの日本語学習者がプロジェクトを見つける助けになります。
+
 ## 動作イメージ
 
 <p align="center">
-  <img src="../assets/screenshots/lyrics-view.png" alt="Windows版Spotifyの歌詞画面に表示された日本語のふりがな" width="100%" />
+  <img src="../assets/marketing/demo.gif" alt="Windows版Spotifyの歌詞画面に表示された日本語ふりがなのアニメーション" width="100%" />
 </p>
 
 <p align="center">
-  <sub>実機環境：Windows 11 · Spotify 1.2.96.518 · Spicetify 2.44.0。歌詞、アートワーク、SpotifyのUI要素に関する権利は各権利者に帰属し、この画像は拡張機能の動作を説明する目的でのみ掲載しています。</sub>
+  <sub>実機環境から作成：Windows 11 · Spotify 1.2.96.518 · Spicetify 2.44.0。<a href="../assets/screenshots/lyrics-view.png">全体のスクリーンショットを見る。</a>歌詞、アートワーク、SpotifyのUI要素に関する権利は各権利者に帰属し、この画像は拡張機能の動作を説明する目的でのみ掲載しています。</sub>
 </p>
 
 Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの `<ruby>` を使ってふりがなを追加します。
@@ -71,6 +76,10 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
 
 ### Releaseパッケージ（推奨）
 
+<p>
+  <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="最新リリースをダウンロード" src="https://img.shields.io/badge/Download-最新リリース-00A77D?style=for-the-badge&amp;logo=github" /></a>
+</p>
+
 1. [最新のRelease](https://github.com/huiishan99/spotify-furigana/releases/latest)から `spotify-furigana-vX.Y.Z.zip` をダウンロードします。
 2. ZIPを完全に展開します。
 3. 展開したフォルダーでPowerShellを開き、次を実行します。
@@ -108,21 +117,18 @@ Spotifyを再起動し、歌詞のある日本語の曲を再生して歌詞画�
 
 ## 更新
 
-```powershell
-git pull
-npm ci
-npm run build
+最新のRelease ZIPをダウンロードして展開し、インストーラーをもう一度実行します。
 
-$target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
-Copy-Item -Recurse -Force "dist\spotify-furigana\*" $target
-spicetify apply
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
+
+更新前に、以前のインストールはタイムスタンプ付きのバックアップとして保存されます。
 
 ## アンインストール
 
 ```powershell
-spicetify config custom_apps spotify-furigana-
-spicetify apply
+powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
 ## 仕組み
@@ -142,13 +148,14 @@ Kuroshiro + Kuromojiでローカル変換
 ```text
 spotify-furigana/
 ├── app/          # Spicetify Custom Appの画面、スタイル、manifest
-├── assets/       # プロジェクトロゴと実機スクリーンショット
+├── assets/       # プロジェクトロゴ、実機スクリーンショット、共有用素材
 ├── docs/         # 中国語・日本語README
 ├── packaging/    # Release用インストーラー、アンインストーラー、オフライン説明
 ├── scripts/      # ビルドとアセットコピー用スクリプト
 ├── src/          # 歌詞監視、セレクター、設定、読み変換エンジン
 ├── tests/        # Vitestユニットテスト
 ├── types/        # KuroshiroとSpicetifyの型宣言
+├── manifest.json # Spicetify Marketplaceの検出用メタデータ
 └── README.md     # 英語の標準エントリーポイント
 ```
 
@@ -166,10 +173,11 @@ spotify-furigana/
 ```powershell
 npm ci
 npm run check
+npm run marketing-assets
 npm run package
 ```
 
-`npm run check` はTypeScriptチェック、Vitestテスト、プロダクションビルドを順番に実行します。`npm run package` はGit管理外の `release/` ディレクトリにインストール用ZIPとSHA-256チェックサムを生成します。
+`npm run check` はTypeScriptチェック、Vitestテスト、プロダクションビルドを順番に実行します。`npm run marketing-assets` は、元のプロジェクトロゴと実機スクリーンショットから共有用画像とデモGIFを決定的に再生成します。`npm run package` はGit管理外の `release/` ディレクトリにインストール用ZIPとSHA-256チェックサムを生成します。
 
 ## 既知の制限
 
@@ -181,19 +189,27 @@ npm run package
 
 - [ ] ふりがなのサイズ、透明度、間隔の設定
 - [ ] カタカナ・ローマ字表示モード
-- [ ] ワンクリックインストール・更新スクリプト
+- [x] 1コマンドでのインストール・更新
 - [ ] Spotify / Spicetifyの追加バージョン検証
 - [ ] Spicetify Marketplaceへの公開
 
 ## コントリビューション
 
-IssueとPull Requestを歓迎します。変更を送る前に、次のコマンドを実行してください。
+IssueとPull Requestを歓迎します。変更を送る前に [CONTRIBUTING.md](../CONTRIBUTING.md) を確認してください。Spotifyの歌詞レイアウト変更については、互換性レポート用テンプレートを利用できます。
+
+提出前に次のコマンドを実行してください。
 
 ```powershell
 npm run check
 ```
 
 互換性の問題を報告する場合は、Spotifyのバージョン、Spicetifyのバージョン、歌詞画面の種類、アカウント情報を含まないコンソールエラーを記載してください。歌詞全文は貼り付けないでください。
+
+セキュリティ上の問題は [SECURITY.md](../SECURITY.md) の手順に従って非公開で報告してください。
+
+## プロジェクトを共有する
+
+[docs/LAUNCH_KIT.md](./LAUNCH_KIT.md) に英語、中国語、日本語の投稿文を用意しています。拡張機能が役立った場合は、[GitHubでStarを付ける](https://github.com/huiishan99/spotify-furigana)か、信頼できる互換性レポートを送ってもらえると助かります。
 
 ## 商標について
 
