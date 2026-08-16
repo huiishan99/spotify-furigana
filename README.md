@@ -1,13 +1,17 @@
 <p align="center">
+  <strong>English</strong> · <a href="./docs/README.zh-CN.md">简体中文</a> · <a href="./docs/README.ja.md">日本語</a>
+</p>
+
+<p align="center">
   <img src="./assets/logo.png" alt="Furigana for Spotify logo" width="168" />
 </p>
 
 <h1 align="center">Furigana for Spotify</h1>
 
 <p align="center">
-  <strong>在 Windows Spotify 桌面歌词上，为日语汉字实时显示振假名。</strong>
+  <strong>Show furigana above Japanese kanji in Spotify lyrics on Windows.</strong>
   <br />
-  本地处理 · 无需歌词 API · 不上传歌词
+  Local processing · No lyrics API · No lyrics uploaded
 </p>
 
 <p align="center">
@@ -19,53 +23,53 @@
 </p>
 
 > [!IMPORTANT]
-> 这是独立社区项目，与 Spotify AB 没有关联，也未获得其赞助或认可。项目自身标志不使用 Spotify 官方 logo；兼容性徽章中的标识仅用于说明目标平台。
+> This is an independent community project. It is not affiliated with, sponsored by, or endorsed by Spotify AB. The project mark does not use the official Spotify logo; the mark inside the compatibility badge only identifies the target platform.
 
-## 效果
+## See it in action
 
 <p align="center">
-  <img src="./assets/screenshots/lyrics-view.png" alt="Windows Spotify 歌词页面中的实时日语振假名效果" width="100%" />
+  <img src="./assets/screenshots/lyrics-view.png" alt="Live Japanese furigana displayed in Spotify lyrics on Windows" width="100%" />
 </p>
 
 <p align="center">
-  <sub>实机截图：Windows 11 · Spotify 1.2.96.518 · Spicetify 2.44.0。歌词、封面及 Spotify 界面元素的权利归各自权利方所有，仅用于展示插件运行效果。</sub>
+  <sub>Captured on Windows 11 · Spotify 1.2.96.518 · Spicetify 2.44.0. Lyrics, artwork, and Spotify UI elements belong to their respective rights holders and appear here only to demonstrate the extension.</sub>
 </p>
 
-插件直接增强 Spotify 已经显示的歌词，把汉字转换为标准 HTML `<ruby>` 注音：
+The extension enhances lyrics already displayed by Spotify and uses standard HTML `<ruby>` annotations to place readings above kanji.
 
-| 原歌词 | 开启振假名后 |
+| Original lyric | With furigana |
 | --- | --- |
 | 声も聞かさないで | <ruby>声<rt>こえ</rt></ruby>も<ruby>聞<rt>き</rt></ruby>かさないで |
 | 明日は晴れる | <ruby>明日<rt>あした</rt></ruby>は<ruby>晴<rt>は</rt></ruby>れる |
 
-## 为什么用它
+## Why use it
 
-- **跟随原生歌词**：自动处理当前桌面歌词页，并兼容已知的全屏歌词布局。
-- **完全本地运行**：Kuroshiro + Kuromoji 在电脑上完成分词与读音转换。
-- **不接管歌词来源**：只增强 Spotify 当前显示的文本，不抓取、保存或重新分发歌词。
-- **随时开关**：通过播放器底部的歌词图标按钮，或左侧插件页面控制。
-- **安全插入 DOM**：只生成经过白名单处理的 `<ruby>`、`<rt>` 和 `<rp>` 节点。
+- **Works with Spotify's lyrics view**: automatically processes the current desktop layout and known fullscreen lyrics layouts.
+- **Runs entirely on your machine**: Kuroshiro + Kuromoji perform tokenization and reading conversion locally.
+- **Does not replace the lyrics source**: it only enhances text already visible in Spotify and does not fetch, store, or redistribute lyrics.
+- **Easy to toggle**: use the lyrics button in the player bar or the custom app page in the sidebar.
+- **Safe DOM output**: only allowlisted `<ruby>`, `<rt>`, and `<rp>` nodes are created.
 
-## 环境要求
+## Requirements
 
-- Windows 10 或 Windows 11
-- Windows Spotify 桌面客户端
+- Windows 10 or Windows 11
+- Spotify desktop for Windows
 - [Spicetify](https://spicetify.app/docs/getting-started)
-- Node.js 22 或更高版本（仅构建时需要）
+- Node.js 22 or later (build time only)
 
-当前已实机验证：
+Verified on real hardware with:
 
-| 组件 | 验证版本 |
+| Component | Verified version |
 | --- | --- |
 | Windows | Windows 11 Pro 10.0.26200 |
-| Spotify | Microsoft Store 版 1.2.96.518 |
+| Spotify | Microsoft Store build 1.2.96.518 |
 | Spicetify | 2.44.0 |
 
-其他版本可能也能工作，但尚未逐一验证。
+Other versions may work, but have not been individually verified.
 
-## 安装
+## Install
 
-### 1. 获取并构建
+### 1. Clone and build
 
 ```powershell
 git clone https://github.com/huiishan99/spotify-furigana.git
@@ -74,7 +78,7 @@ npm ci
 npm run build
 ```
 
-### 2. 安装到 Spicetify
+### 2. Install into Spicetify
 
 ```powershell
 $target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
@@ -85,12 +89,12 @@ spicetify config custom_apps spotify-furigana
 spicetify apply
 ```
 
-重新启动 Spotify，播放一首带歌词的日语歌曲，然后打开歌词页面。第一次转换时，本地词典需要短暂加载。
+Restart Spotify, play a Japanese song with lyrics, and open the lyrics view. The local dictionary may take a moment to load on the first conversion.
 
 > [!NOTE]
-> Microsoft Store 版 Spotify 只受到 Spicetify 的部分支持。若普通快捷方式没有加载插件，请使用 `spicetify auto` 启动；若遇到 `Cannot find pref_file`，请参阅 [Spicetify FAQ](https://spicetify.app/docs/faq)。
+> Spicetify support for the Microsoft Store build of Spotify is limited. If your regular shortcut does not load the extension, launch Spotify with `spicetify auto`. See the [Spicetify FAQ](https://spicetify.app/docs/faq) if you encounter `Cannot find pref_file`.
 
-## 更新
+## Update
 
 ```powershell
 git pull
@@ -102,71 +106,86 @@ Copy-Item -Recurse -Force "dist\spotify-furigana\*" $target
 spicetify apply
 ```
 
-## 卸载
+## Uninstall
 
 ```powershell
 spicetify config custom_apps spotify-furigana-
 spicetify apply
 ```
 
-## 工作原理
+## How it works
 
 ```text
-Spotify 歌词 DOM
+Spotify lyrics DOM
         ↓
-识别含汉字的歌词行
+Find lyric lines containing kanji
         ↓
-Kuroshiro + Kuromoji 本地转换
+Convert locally with Kuroshiro + Kuromoji
         ↓
-安全生成 <ruby> / <rt> 注音
+Build safe <ruby> / <rt> annotations
 ```
 
-关键代码：
+## Repository layout
 
-- `src/extension.ts`：观察歌词 DOM、管理开关并更新歌词行。
-- `src/lyrics.ts`：维护新旧 Spotify 歌词布局选择器。
-- `src/reading-engine.ts`：本地读音转换与安全 DOM 构建。
-- `app/`：Spicetify Custom App 页面、样式和 manifest。
-- `scripts/build.mjs`：打包扩展并复制 Kuromoji 词典。
+```text
+spotify-furigana/
+├── app/          # Spicetify Custom App page, styles, and manifest
+├── assets/       # Project logo and live screenshots
+├── docs/         # Chinese and Japanese README translations
+├── scripts/      # Build and asset-copy scripts
+├── src/          # Lyrics observer, selectors, settings, and reading engine
+├── tests/        # Vitest unit tests
+├── types/        # Kuroshiro and Spicetify type declarations
+└── README.md     # Canonical English entry point
+```
 
-## 开发
+Key files:
+
+- `src/extension.ts`: observes the lyrics DOM, manages the toggle, and updates lyric lines.
+- `src/lyrics.ts`: contains selectors for current and legacy Spotify lyrics layouts.
+- `src/reading-engine.ts`: performs local reading conversion and builds safe DOM nodes.
+- `scripts/build.mjs`: bundles the extension and copies the Kuromoji dictionary.
+
+The runtime, source, tests, build tooling, types, assets, and documentation already have clear boundaries, so the source directories do not need a cosmetic reorganization.
+
+## Development
 
 ```powershell
 npm ci
 npm run check
 ```
 
-`npm run check` 会依次执行 TypeScript 检查、Vitest 测试和生产构建。
+`npm run check` runs TypeScript checks, Vitest, and the production build.
 
-## 已知限制
+## Known limitations
 
-- 人名、地名、歌词双关和刻意变化的读法可能标注错误。
-- Spotify 更新可能改变歌词 DOM；若插件突然失效，请在 issue 中附上 Spotify 与 Spicetify 版本。
-- 当前只面向 Windows Spotify 桌面客户端，不支持 Web Player、macOS 或移动端。
+- Names, place names, wordplay, and intentionally unusual lyric readings may be annotated incorrectly.
+- Spotify updates can change the lyrics DOM. If the extension stops working, include your Spotify and Spicetify versions in the issue.
+- The project currently targets Spotify desktop for Windows only. Web Player, macOS, and mobile are not supported.
 
-## 路线图
+## Roadmap
 
-- [ ] 调整振假名字号、透明度和间距
-- [ ] 片假名与罗马字显示模式
-- [ ] 一键安装与更新脚本
-- [ ] 更多 Spotify / Spicetify 版本验证
-- [ ] Spicetify Marketplace 发布
+- [ ] Furigana size, opacity, and spacing controls
+- [ ] Katakana and romaji display modes
+- [ ] One-command install and update script
+- [ ] Verification across more Spotify and Spicetify versions
+- [ ] Spicetify Marketplace release
 
-## 参与贡献
+## Contributing
 
-Issue 和 Pull Request 都欢迎。提交前请先运行：
+Issues and pull requests are welcome. Before submitting a change, run:
 
 ```powershell
 npm run check
 ```
 
-报告兼容性问题时，请提供 Spotify 版本、Spicetify 版本、歌词视图类型，以及不包含账号信息的控制台错误。请不要粘贴完整歌词。
+For compatibility reports, include the Spotify version, Spicetify version, lyrics view type, and console errors with account information removed. Do not paste complete lyrics.
 
-## 商标声明
+## Trademark notice
 
-Furigana for Spotify 是一个独立开源项目。Spotify、Spotify logo 及相关品牌元素是 Spotify AB 的商标。本项目与 Spotify AB 没有关联，也未获得其赞助或认可。“for Spotify”仅用于说明兼容平台。
+Furigana for Spotify is an independent open-source project. Spotify, the Spotify logo, and related brand elements are trademarks of Spotify AB. This project is not affiliated with, sponsored by, or endorsed by Spotify AB. “for Spotify” is used only to describe platform compatibility.
 
-项目图标为原创设计，使用“ふ”、注音条和音符表达日语歌词辅助功能。近黑、青翠绿和米白配色用于建立音乐流媒体产品的视觉联想；青翠绿与 Spotify Green 不同，图形也不使用 Spotify 的圆形、波纹或官方标识。参见 [Spotify Design & Branding Guidelines](https://developer.spotify.com/documentation/design)。
+The project logo is an original design combining “ふ”, a ruby-annotation bar, and a music note. Its near-black, teal-emerald, and off-white palette suggests a music-streaming product while remaining distinct from Spotify Green; it does not use Spotify's circle, waves, or official logo. See the [Spotify Design & Branding Guidelines](https://developer.spotify.com/documentation/design).
 
 ## License
 

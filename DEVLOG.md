@@ -1,5 +1,11 @@
 # Devlog
 
+## 2026-08-16 — Multilingual documentation structure
+
+- 将根目录 `README.md` 改为英文默认入口，并新增 `docs/README.zh-CN.md` 与 `docs/README.ja.md` 两份完整翻译。
+- 三种语言在顶部互相链接，并保持 Logo、徽章、截图、功能、安装、限制、路线图、贡献和商标说明一致。
+- 增加仓库结构说明；审查确认 `app/`、`src/`、`tests/`、`scripts/`、`types/` 与 `assets/` 职责清晰，因此只新增 `docs/`，不移动源码或破坏现有构建路径。
+
 ## 2026-08-16 — Streaming-inspired app logo palette
 
 - 将 App 主 Logo 从靛蓝/珊瑚色调整为近黑、青翠绿与米白，在不使用 Spotify 官方标识的前提下强化音乐流媒体产品联想。
