@@ -1,3 +1,3 @@
-export function getDictionaryPath(origin: string): string {
-  return new URL("/assets/spotify-furigana/dict/", origin).href;
+export function getDictionaryPath(): string {
+  return "/assets/spotify-furigana/dict/";
 }

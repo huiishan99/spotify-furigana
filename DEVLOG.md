@@ -1,5 +1,14 @@
 # Devlog
 
+## 2026-08-16 — Spotify 1.2.96 runtime selector fix
+
+- 在 Microsoft Store Spotify 1.2.96.518 + Spicetify 2.44.0 中完成真实运行时诊断。
+- 确认扩展脚本、播放器开关和 12 个 Kuromoji 词典资源均已加载。
+- 修复 Spotify 1.2.96 移除歌词行 `data-testid` 后无法匹配歌词的问题。
+- 修复 Kuromoji 经 `path-browserify` 解析完整 URL 后产生重复域名、导致词典请求 404 的问题。
+- 词典加载失败后停止自动重试，避免对同一批本地资源持续发起无效请求。
+- 新增当前 `.lyrics-lyricsContent-text` 布局与旧版布局的回归测试。
+
 ## 2026-08-16 — 改为 Windows Spotify 桌面端
 
 - 根据需求澄清，将目标从 Spotify Web Player 浏览器扩展改为 Windows Spotify 桌面客户端。

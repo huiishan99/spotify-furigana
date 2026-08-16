@@ -8,12 +8,8 @@ import {
   setFuriganaEnabled,
   SETTING_CHANGE_EVENT,
 } from "./settings";
+import { LYRIC_SELECTOR } from "./lyrics";
 import { normalizeLyricText, shouldAnnotateLyric } from "./text";
-
-const LYRIC_SELECTOR = [
-  '[data-testid="lyrics-line"]',
-  '[data-testid="fullscreen-lyric"]',
-].join(",");
 
 const STATE_ATTRIBUTE = "data-spotify-furigana";
 const STYLE_ID = "spotify-furigana-styles";
@@ -69,11 +65,12 @@ async function main(): Promise<void> {
   await waitForSpicetify();
   injectStyles();
 
-  const dictionaryPath = getDictionaryPath(window.location.origin);
+  const dictionaryPath = getDictionaryPath();
   const originalNodes = new WeakMap<HTMLElement, Node[]>();
   const sourceText = new WeakMap<HTMLElement, string>();
 
   let enabled = isFuriganaEnabled();
+  let engineUnavailable = false;
   let scanFrame: number | undefined;
   let reportedEngineError = false;
 
@@ -161,6 +158,7 @@ async function main(): Promise<void> {
       );
       line.setAttribute(STATE_ATTRIBUTE, "ready");
     } catch (error: unknown) {
+      engineUnavailable = true;
       restoreLine(line);
       if (!reportedEngineError) {
         reportedEngineError = true;
@@ -172,7 +170,7 @@ async function main(): Promise<void> {
 
   function scan(): void {
     scanFrame = undefined;
-    if (!enabled) {
+    if (!enabled || engineUnavailable) {
       return;
     }
 
@@ -202,6 +200,7 @@ async function main(): Promise<void> {
     playbarButton.label = enabled ? "关闭歌词振假名" : "开启歌词振假名";
 
     if (enabled) {
+      engineUnavailable = false;
       scheduleScan();
     } else {
       restoreAll();
