@@ -1,0 +1,13 @@
+{
+  "name": "Furigana for Spotify",
+  "description": "Show local, real-time furigana above Japanese kanji in Spotify lyrics on Windows.",
+  "preview": "assets/marketing/demo.gif",
+  "readme": "README.md",
+  "authors": [
+    {
+      "name": "huiishan99",
+      "url": "https://github.com/huiishan99"
+    }
+  ],
+  "tags": ["furigana", "japanese", "lyrics", "language-learning"]
+}

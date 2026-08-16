@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Installation guide
+    url: https://github.com/huiishan99/spotify-furigana#install
+    about: Check the requirements and installation troubleshooting first.
+  - name: Spicetify documentation
+    url: https://spicetify.app/docs/getting-started
+    about: Get help installing or repairing Spicetify itself.

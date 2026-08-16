@@ -1,0 +1,14 @@
+{
+  "socialPreview": {
+    "file": "social-preview.png",
+    "width": 1280,
+    "height": 640,
+    "purpose": "GitHub social preview and static launch artwork"
+  },
+  "demo": {
+    "file": "demo.gif",
+    "width": 960,
+    "height": 540,
+    "purpose": "README and community launch demo"
+  }
+}

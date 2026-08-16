@@ -1,5 +1,13 @@
 # Devlog
 
+## 2026-08-16 — Open-source launch and discovery kit
+
+- 新增仓库根目录 Marketplace `manifest.json` 与 `spicetify-apps` 发布准备，使项目满足 Spicetify Marketplace 的发现元数据要求。
+- 使用原创 Logo 和真实 Spotify 实机截图确定性生成 `1280 × 640` 社交封面与 `960 × 540` 演示 GIF；保留 SVG 源文件、生成脚本、素材清单与来源说明，不使用生成式方式重画歌词或界面。
+- 三语 README 增加 Release、Star、下载入口、动态演示、统一的更新/卸载流程与分享引导。
+- 新增贡献指南、安全策略、行为准则、Bug/兼容性与功能请求表单、PR 模板，以及中日英三语发布文案。
+- 将仓库级 Git 提交邮箱切换为 GitHub noreply；未重写旧提交历史，以免破坏已发布的标签与 Release。
+
 ## 2026-08-16 — Installable v0.1.0 release packaging
 
 - 新增 `npm run package`，把预编译扩展、Kuromoji 词典、MIT License、三语离线说明和 PowerShell 安装/卸载器打包为 Release ZIP，并生成 SHA-256 校验文件。
