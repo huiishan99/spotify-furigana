@@ -69,7 +69,19 @@
 
 ## 安装
 
-### 1. 获取并构建
+### Release 安装包（推荐）
+
+1. 从[最新 Release](https://github.com/huiishan99/spotify-furigana/releases/latest)下载 `spotify-furigana-vX.Y.Z.zip`。
+2. 完整解压 ZIP。
+3. 在解压目录中打开 PowerShell，运行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+安装包已包含编译后的扩展和 Kuromoji 词典。安装器会先把现有版本保存为带时间戳的备份，然后复制到 Spicetify、启用插件并运行 `spicetify apply`。
+
+### 从源码构建
 
 ```powershell
 git clone https://github.com/huiishan99/spotify-furigana.git
@@ -78,7 +90,7 @@ npm ci
 npm run build
 ```
 
-### 2. 安装到 Spicetify
+### 将源码构建安装到 Spicetify
 
 ```powershell
 $target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
@@ -132,6 +144,7 @@ spotify-furigana/
 ├── app/          # Spicetify Custom App 页面、样式与 manifest
 ├── assets/       # 项目 Logo 与实机截图
 ├── docs/         # 中文、日文 README
+├── packaging/    # Release 安装器、卸载器与离线说明
 ├── scripts/      # 构建与资源复制脚本
 ├── src/          # 歌词观察、选择器、设置与读音引擎
 ├── tests/        # Vitest 单元测试
@@ -153,9 +166,10 @@ spotify-furigana/
 ```powershell
 npm ci
 npm run check
+npm run package
 ```
 
-`npm run check` 会依次执行 TypeScript 检查、Vitest 测试和生产构建。
+`npm run check` 会依次执行 TypeScript 检查、Vitest 测试和生产构建。`npm run package` 会在被 Git 忽略的 `release/` 目录中生成可直接安装的 ZIP 和 SHA-256 校验文件。
 
 ## 已知限制
 

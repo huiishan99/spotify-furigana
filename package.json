@@ -6,6 +6,7 @@
   "description": "A Spicetify desktop extension that adds furigana to Japanese lyrics in Spotify for Windows.",
   "scripts": {
     "build": "node scripts/build.mjs",
+    "package": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package.ps1",
     "compile": "tsc --noEmit",
     "test": "vitest run",
     "check": "npm run compile && npm run test && npm run build"

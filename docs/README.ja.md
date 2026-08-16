@@ -69,7 +69,19 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
 
 ## インストール
 
-### 1. 取得とビルド
+### Releaseパッケージ（推奨）
+
+1. [最新のRelease](https://github.com/huiishan99/spotify-furigana/releases/latest)から `spotify-furigana-vX.Y.Z.zip` をダウンロードします。
+2. ZIPを完全に展開します。
+3. 展開したフォルダーでPowerShellを開き、次を実行します。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+Releaseにはビルド済みの拡張機能とKuromoji辞書が含まれています。インストーラーは既存バージョンをタイムスタンプ付きでバックアップしてからSpicetifyへコピーし、アプリを有効化して `spicetify apply` を実行します。
+
+### ソースからビルド
 
 ```powershell
 git clone https://github.com/huiishan99/spotify-furigana.git
@@ -78,7 +90,7 @@ npm ci
 npm run build
 ```
 
-### 2. Spicetifyへインストール
+### ソースビルドをSpicetifyへインストール
 
 ```powershell
 $target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
@@ -132,6 +144,7 @@ spotify-furigana/
 ├── app/          # Spicetify Custom Appの画面、スタイル、manifest
 ├── assets/       # プロジェクトロゴと実機スクリーンショット
 ├── docs/         # 中国語・日本語README
+├── packaging/    # Release用インストーラー、アンインストーラー、オフライン説明
 ├── scripts/      # ビルドとアセットコピー用スクリプト
 ├── src/          # 歌詞監視、セレクター、設定、読み変換エンジン
 ├── tests/        # Vitestユニットテスト
@@ -153,9 +166,10 @@ spotify-furigana/
 ```powershell
 npm ci
 npm run check
+npm run package
 ```
 
-`npm run check` はTypeScriptチェック、Vitestテスト、プロダクションビルドを順番に実行します。
+`npm run check` はTypeScriptチェック、Vitestテスト、プロダクションビルドを順番に実行します。`npm run package` はGit管理外の `release/` ディレクトリにインストール用ZIPとSHA-256チェックサムを生成します。
 
 ## 既知の制限
 

@@ -1,5 +1,13 @@
 # Devlog
 
+## 2026-08-16 — Installable v0.1.0 release packaging
+
+- 新增 `npm run package`，把预编译扩展、Kuromoji 词典、MIT License、三语离线说明和 PowerShell 安装/卸载器打包为 Release ZIP，并生成 SHA-256 校验文件。
+- Release 包同时附带所有已打包运行时依赖的完整许可证与 Kuromoji notice，避免把项目 MIT License 误当成第三方代码和词典的许可证。
+- 安装器会在覆盖前保留带时间戳的旧版本备份，任一步骤失败时回滚；卸载器将安装目录移动到可恢复位置，不直接永久删除。
+- 新增 tag 驱动的 GitHub Release workflow：校验 tag 与 `package.json` 版本一致，运行编译、测试和打包，再上传 ZIP 与校验文件。
+- 三语 README 增加 Release 快速安装路径，同时保留源码构建方式。
+
 ## 2026-08-16 — Multilingual documentation structure
 
 - 将根目录 `README.md` 改为英文默认入口，并新增 `docs/README.zh-CN.md` 与 `docs/README.ja.md` 两份完整翻译。

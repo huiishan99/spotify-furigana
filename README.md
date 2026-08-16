@@ -69,7 +69,19 @@ Other versions may work, but have not been individually verified.
 
 ## Install
 
-### 1. Clone and build
+### Release package (recommended)
+
+1. Download `spotify-furigana-vX.Y.Z.zip` from the [latest release](https://github.com/huiishan99/spotify-furigana/releases/latest).
+2. Extract the ZIP completely.
+3. Open PowerShell in the extracted folder and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+The release already contains the compiled extension and Kuromoji dictionary. The installer preserves an existing installation as a timestamped backup, copies the app into Spicetify, enables it, and runs `spicetify apply`.
+
+### Build from source
 
 ```powershell
 git clone https://github.com/huiishan99/spotify-furigana.git
@@ -78,7 +90,7 @@ npm ci
 npm run build
 ```
 
-### 2. Install into Spicetify
+### Install the source build into Spicetify
 
 ```powershell
 $target = Join-Path $env:APPDATA "spicetify\CustomApps\spotify-furigana"
@@ -132,6 +144,7 @@ spotify-furigana/
 ├── app/          # Spicetify Custom App page, styles, and manifest
 ├── assets/       # Project logo and live screenshots
 ├── docs/         # Chinese and Japanese README translations
+├── packaging/    # Release installer, uninstaller, and offline instructions
 ├── scripts/      # Build and asset-copy scripts
 ├── src/          # Lyrics observer, selectors, settings, and reading engine
 ├── tests/        # Vitest unit tests
@@ -153,9 +166,10 @@ The runtime, source, tests, build tooling, types, assets, and documentation alre
 ```powershell
 npm ci
 npm run check
+npm run package
 ```
 
-`npm run check` runs TypeScript checks, Vitest, and the production build.
+`npm run check` runs TypeScript checks, Vitest, and the production build. `npm run package` creates the ready-to-install ZIP and SHA-256 checksum under the ignored `release/` directory.
 
 ## Known limitations
 
