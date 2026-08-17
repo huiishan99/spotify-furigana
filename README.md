@@ -87,12 +87,12 @@ See the [compatibility matrix](./docs/COMPATIBILITY.md) for more version informa
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-The installer detects your single Spotify installation, backs up an existing Furigana installation, installs and enables the app, applies the Spicetify configuration, and creates a **Spotify with Furigana** launcher in the Start menu.
+The installer detects your single Spotify installation, backs up an existing Furigana installation, installs and enables the app, applies the Spicetify configuration, and creates a **Furigana for Spotify** launcher in the Start menu. The launcher uses the project's original **ふ** icon so it is easy to distinguish from Spotify's regular shortcut.
 
-After installation, open **Spotify with Furigana** from the Start menu. This launcher checks and reapplies Spicetify before opening Spotify, so the extension survives normal restarts and can recover automatically after supported Spotify updates. Play a Japanese song with lyrics and open the lyrics view; the local dictionary may take a moment to load on the first conversion.
+After installation, open **Furigana for Spotify** from the Start menu. This launcher checks and reapplies Spicetify before opening Spotify, so the extension survives normal restarts and can recover automatically after supported Spotify updates. Play a Japanese song with lyrics and open the lyrics view; the local dictionary may take a moment to load on the first conversion.
 
 > [!IMPORTANT]
-> Microsoft Store users must launch **Spotify with Furigana** instead of Spotify's regular shortcut. The generated launcher runs `spicetify auto` with the required app directory; opening the Store app directly will show the unmodified Spotify UI. Spicetify 2.44 officially lists support through Spotify 1.2.93; the Store 1.2.96 setup above is real-client tested by this project but remains outside Spicetify's official range.
+> Microsoft Store users must launch **Furigana for Spotify** instead of Spotify's regular shortcut. The generated launcher runs `spicetify auto` with the required app directory; opening the Store app directly will show the unmodified Spotify UI. Spicetify 2.44 officially lists support through Spotify 1.2.93; the Store 1.2.96 setup above is real-client tested by this project but remains outside Spicetify's official range.
 
 ## Update
 
@@ -126,9 +126,9 @@ powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 
 - **No Furigana page in the sidebar:** run `spicetify apply`, then restart Spotify.
 - **The button appears but lyrics are unchanged:** make sure the song has Japanese lyrics containing kanji, enable the lyrics button, and wait briefly for the first local dictionary load.
-- **The app disappeared after a Spotify update:** close Spotify and open **Spotify with Furigana** from the Start menu. If needed, run `spicetify backup apply` once.
+- **The app disappeared after a Spotify update:** close Spotify and open **Furigana for Spotify** from the Start menu. If needed, run `spicetify backup apply` once.
 - **The installer detects two Spotify installations:** keep either the Microsoft Store build or the [spotify.com build](https://www.spotify.com/download/windows/), remove the other, open the retained app for at least 60 seconds, then run the installer again.
-- **Microsoft Store Spotify opens without Furigana:** close it and use **Spotify with Furigana** from the Start menu; do not use the regular Store shortcut.
+- **Microsoft Store Spotify opens without Furigana:** close it and use **Furigana for Spotify** from the Start menu; do not use the regular Store shortcut.
 
 ## Known limitations
 

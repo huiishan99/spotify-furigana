@@ -87,12 +87,12 @@
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-安装器会识别唯一的 Spotify 安装、备份现有 Furigana 版本、安装并启用插件、应用 Spicetify 配置，并在开始菜单创建 **Spotify with Furigana** 启动入口。
+安装器会识别唯一的 Spotify 安装、备份现有 Furigana 版本、安装并启用插件、应用 Spicetify 配置，并在开始菜单创建 **Furigana for Spotify** 启动入口。这个入口使用项目原创的 **「ふ」图标**，方便与 Spotify 原版快捷方式区分。
 
-安装完成后，请从开始菜单打开 **Spotify with Furigana**。它会在启动 Spotify 前检查并重新应用 Spicetify，因此普通重启后插件仍然有效；在受支持的 Spotify 更新后，它也能自动修复。接着播放一首带歌词的日语歌曲并打开歌词页面。第一次转换时，本地词典需要短暂加载。
+安装完成后，请从开始菜单打开 **Furigana for Spotify**。它会在启动 Spotify 前检查并重新应用 Spicetify，因此普通重启后插件仍然有效；在受支持的 Spotify 更新后，它也能自动修复。接着播放一首带歌词的日语歌曲并打开歌词页面。第一次转换时，本地词典需要短暂加载。
 
 > [!IMPORTANT]
-> Microsoft Store 用户必须使用 **Spotify with Furigana**，不能使用 Spotify 原来的普通快捷方式。安装器生成的入口会通过 `spicetify auto` 带上所需的应用目录；直接打开 Store 应用只会显示未修改的 Spotify。Spicetify 2.44 官方兼容范围只到 Spotify 1.2.93；上表的 Store 1.2.96 已由本项目实机验证，但仍超出 Spicetify 官方范围。
+> Microsoft Store 用户必须使用 **Furigana for Spotify**，不能使用 Spotify 原来的普通快捷方式。安装器生成的入口会通过 `spicetify auto` 带上所需的应用目录；直接打开 Store 应用只会显示未修改的 Spotify。Spicetify 2.44 官方兼容范围只到 Spotify 1.2.93；上表的 Store 1.2.96 已由本项目实机验证，但仍超出 Spicetify 官方范围。
 
 ## 更新
 
@@ -126,9 +126,9 @@ powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 
 - **左侧栏没有 Furigana 页面：**运行 `spicetify apply`，然后重新启动 Spotify。
 - **按钮出现但歌词没有变化：**确认歌曲有包含汉字的日语歌词、歌词按钮处于开启状态，并等待首次本地词典加载。
-- **Spotify 更新后插件消失：**关闭 Spotify，然后从开始菜单打开 **Spotify with Furigana**；必要时手动运行一次 `spicetify backup apply`。
+- **Spotify 更新后插件消失：**关闭 Spotify，然后从开始菜单打开 **Furigana for Spotify**；必要时手动运行一次 `spicetify backup apply`。
 - **安装器检测到两个 Spotify：**保留 Microsoft Store 版或 [spotify.com 桌面版](https://www.spotify.com/download/windows/)中的一个，卸载另一个，打开保留版本至少 60 秒，再重新运行安装器。
-- **Microsoft Store 版打开后没有 Furigana：**关闭它，从开始菜单使用 **Spotify with Furigana**；不要使用原来的 Store 快捷方式。
+- **Microsoft Store 版打开后没有 Furigana：**关闭它，从开始菜单使用 **Furigana for Spotify**；不要使用原来的 Store 快捷方式。
 
 ## 已知限制
 

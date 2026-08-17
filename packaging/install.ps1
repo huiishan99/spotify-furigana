@@ -46,7 +46,7 @@ function New-FuriganaShortcut {
   param(
     [Parameter(Mandatory = $true)][string]$Path,
     [Parameter(Mandatory = $true)][string]$SpicetifyExecutable,
-    [Parameter(Mandatory = $true)][string]$SpotifyExecutable
+    [Parameter(Mandatory = $true)][string]$IconPath
   )
 
   $shortcutRoot = Split-Path -Parent $Path
@@ -59,7 +59,7 @@ function New-FuriganaShortcut {
     $shortcut.TargetPath = $SpicetifyExecutable
     $shortcut.Arguments = "auto"
     $shortcut.WorkingDirectory = Split-Path -Parent $SpicetifyExecutable
-    $shortcut.IconLocation = "${SpotifyExecutable},0"
+    $shortcut.IconLocation = "${IconPath},0"
     $shortcut.Description = "Launch Spotify and keep Furigana for Spotify applied"
     $shortcut.WindowStyle = 7
     $shortcut.Save()
@@ -74,8 +74,12 @@ function New-FuriganaShortcut {
 $appName = "spotify-furigana"
 $sourceApp = Join-Path $PSScriptRoot $appName
 $sourceManifest = Join-Path $sourceApp "manifest.json"
+$sourceLauncherIcon = Join-Path $sourceApp "launcher.ico"
 if (-not (Test-Path -LiteralPath $sourceManifest)) {
   throw "The release package is incomplete: ${sourceManifest} is missing."
+}
+if (-not (Test-Path -LiteralPath $sourceLauncherIcon -PathType Leaf)) {
+  throw "The release package is incomplete: ${sourceLauncherIcon} is missing."
 }
 
 $storeSpotify = Get-AppxPackage -Name "SpotifyAB.SpotifyMusic" -ErrorAction SilentlyContinue | Select-Object -First 1
@@ -113,10 +117,12 @@ if (-not $resolvedTarget.StartsWith($expectedPrefix, [System.StringComparison]::
 }
 
 $startMenuPrograms = Join-Path ([Environment]::GetFolderPath("StartMenu")) "Programs"
-$shortcutPath = Join-Path $startMenuPrograms "Spotify with Furigana.lnk"
+$shortcutPath = Join-Path $startMenuPrograms "Furigana for Spotify.lnk"
+$legacyShortcutPath = Join-Path $startMenuPrograms "Spotify with Furigana.lnk"
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $backupPath = $null
 $shortcutBackupPath = $null
+$legacyShortcutBackupPath = $null
 
 New-Item -ItemType Directory -Path $customAppsRoot -Force | Out-Null
 if (Test-Path -LiteralPath $targetApp) {
@@ -129,6 +135,10 @@ if (Test-Path -LiteralPath $targetApp) {
 if (Test-Path -LiteralPath $shortcutPath) {
   $shortcutBackupPath = "${shortcutPath}.backup-${timestamp}"
   Move-Item -LiteralPath $shortcutPath -Destination $shortcutBackupPath
+}
+if (Test-Path -LiteralPath $legacyShortcutPath) {
+  $legacyShortcutBackupPath = "${legacyShortcutPath}.backup-${timestamp}"
+  Move-Item -LiteralPath $legacyShortcutPath -Destination $legacyShortcutBackupPath
 }
 
 try {
@@ -153,7 +163,8 @@ try {
     Write-Warning "The existing Spotify backup could not be applied. Refreshing the backup for the current Spotify version..."
     Invoke-Spicetify -Executable $spicetifyExecutable -Arguments @("-n", "backup", "apply")
   }
-  New-FuriganaShortcut -Path $shortcutPath -SpicetifyExecutable $spicetifyExecutable -SpotifyExecutable $spotifyExecutable
+  $installedLauncherIcon = Join-Path $targetApp "launcher.ico"
+  New-FuriganaShortcut -Path $shortcutPath -SpicetifyExecutable $spicetifyExecutable -IconPath $installedLauncherIcon
   Invoke-Spicetify -Executable $spicetifyExecutable -Arguments @("auto")
 } catch {
   if (Test-Path -LiteralPath $targetApp) {
@@ -168,6 +179,9 @@ try {
   if ($shortcutBackupPath -and (Test-Path -LiteralPath $shortcutBackupPath)) {
     Move-Item -LiteralPath $shortcutBackupPath -Destination $shortcutPath
   }
+  if ($legacyShortcutBackupPath -and (Test-Path -LiteralPath $legacyShortcutBackupPath)) {
+    Move-Item -LiteralPath $legacyShortcutBackupPath -Destination $legacyShortcutPath
+  }
   throw
 }
 
@@ -178,6 +192,9 @@ if ($backupPath) {
 if ($shortcutBackupPath) {
   Write-Host "The previous launcher shortcut was preserved at ${shortcutBackupPath}."
 }
+if ($legacyShortcutBackupPath) {
+  Write-Host "The legacy launcher shortcut was preserved at ${legacyShortcutBackupPath}."
+}
 Write-Host "A self-repairing launcher was created at ${shortcutPath}."
 Write-Host "Configured Spotify installation: ${spotifyInstallType}."
-Write-Host "Open 'Spotify with Furigana' from the Start menu. It runs 'spicetify auto' so Spotify updates are reapplied before launch."
+Write-Host "Open 'Furigana for Spotify' from the Start menu. It runs 'spicetify auto' so Spotify updates are reapplied before launch."

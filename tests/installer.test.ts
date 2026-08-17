@@ -43,8 +43,14 @@ describe("Windows release installer", () => {
   });
 
   it("installs a self-repairing launcher and removes it on uninstall", () => {
+    expect(installer).toContain("Furigana for Spotify.lnk");
     expect(installer).toContain("Spotify with Furigana.lnk");
+    expect(installer).toContain("legacyShortcutBackupPath");
     expect(installer).toContain('$shortcut.Arguments = "auto"');
+    expect(installer).toContain('$sourceLauncherIcon = Join-Path $sourceApp "launcher.ico"');
+    expect(installer).toContain('$shortcut.IconLocation = "${IconPath},0"');
+    expect(installer).not.toContain('$shortcut.IconLocation = "${SpotifyExecutable},0"');
+    expect(uninstaller).toContain("Furigana for Spotify.lnk");
     expect(uninstaller).toContain("Spotify with Furigana.lnk");
     expect(uninstaller).toContain("removedShortcutPath");
   });

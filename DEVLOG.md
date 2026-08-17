@@ -95,3 +95,9 @@
 - 支持 Spotify 的 `lyrics-line` 与 `fullscreen-lyric` 两类歌词节点。
 - 增加开关弹窗、单元测试、生产构建和 GitHub Actions CI。
 - 明确 MVP 边界：尚未完成 Chrome Web Store 发布，也未在所有 Spotify 账号/地区布局中验证。
+
+## 2026-08-17 — Original Windows launcher icon
+
+- 将启动器从 Spotify 官方图标改为项目原创的「ふ」Logo，并将名称统一为品牌规范更清晰的 `Furigana for Spotify`；旧 `Spotify with Furigana` 快捷方式会在升级时保留为带时间戳的备份。
+- 新增确定性的多尺寸 Windows ICO 生成脚本，并把图标纳入构建、Release 包、安装器完整性检查及安装器测试。
+- 安装器现在将快捷方式图标指向已安装 Custom App 内的 `launcher.ico`；三语 README 同步说明入口识别方式，版本提升至 `0.2.3`。

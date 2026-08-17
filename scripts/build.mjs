@@ -35,6 +35,10 @@ await Promise.all([
     resolve(outputRoot, "manifest.json"),
   ),
   copyFile(resolve(projectRoot, "app", "style.css"), resolve(outputRoot, "style.css")),
+  copyFile(
+    resolve(projectRoot, "assets", "launcher.ico"),
+    resolve(outputRoot, "launcher.ico"),
+  ),
   cp(
     resolve(projectRoot, "node_modules", "kuromoji", "dict"),
     resolve(outputRoot, "dict"),

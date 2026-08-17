@@ -18,7 +18,7 @@ To uninstall:
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
-The installer preserves an existing installation as a timestamped backup before replacing it. It applies Spicetify and creates **Spotify with Furigana** in the Start menu. Use that launcher for future starts so `spicetify auto` can repair supported Spotify updates automatically. This launcher is required for Microsoft Store Spotify; the regular Store shortcut opens the unmodified UI.
+The installer preserves an existing installation as a timestamped backup before replacing it. It applies Spicetify and creates **Furigana for Spotify** in the Start menu with the project's original **ふ** icon. Use that launcher for future starts so `spicetify auto` can repair supported Spotify updates automatically. This launcher is required for Microsoft Store Spotify; the regular Store shortcut opens the unmodified UI.
 
 ## 简体中文
 
@@ -38,7 +38,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
-覆盖安装前，安装器会把现有版本保留为带时间戳的备份。它会应用 Spicetify，并在开始菜单创建 **Spotify with Furigana**。以后请用这个入口启动，让 `spicetify auto` 在受支持的 Spotify 更新后自动修复。Microsoft Store 版必须使用此入口；原来的 Store 快捷方式只会打开未修改界面。
+覆盖安装前，安装器会把现有版本保留为带时间戳的备份。它会应用 Spicetify，并在开始菜单创建带项目原创 **「ふ」图标**的 **Furigana for Spotify**。以后请用这个入口启动，让 `spicetify auto` 在受支持的 Spotify 更新后自动修复。Microsoft Store 版必须使用此入口；原来的 Store 快捷方式只会打开未修改界面。
 
 ## 日本語
 
@@ -58,6 +58,6 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
-上書きインストールの前に、既存バージョンはタイムスタンプ付きのバックアップとして保存されます。Spicetifyを適用し、スタートメニューに **Spotify with Furigana** を作成します。今後はこのランチャーを使用すると、`spicetify auto` が対応済みのSpotify更新後に自動復旧します。Microsoft Store版ではこのランチャーが必須で、通常のStoreショートカットは未変更のUIを開きます。
+上書きインストールの前に、既存バージョンはタイムスタンプ付きのバックアップとして保存されます。Spicetifyを適用し、スタートメニューにプロジェクト独自の **「ふ」アイコン**を使用した **Furigana for Spotify** を作成します。今後はこのランチャーを使用すると、`spicetify auto` が対応済みのSpotify更新後に自動復旧します。Microsoft Store版ではこのランチャーが必須で、通常のStoreショートカットは未変更のUIを開きます。
 
 Project: https://github.com/huiishan99/spotify-furigana

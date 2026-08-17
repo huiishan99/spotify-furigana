@@ -72,11 +72,16 @@ if (Test-Path -LiteralPath $targetApp) {
 }
 
 $startMenuPrograms = Join-Path ([Environment]::GetFolderPath("StartMenu")) "Programs"
-$shortcutPath = Join-Path $startMenuPrograms "Spotify with Furigana.lnk"
-if (Test-Path -LiteralPath $shortcutPath) {
-  $removedShortcutPath = "${shortcutPath}.removed-${timestamp}"
-  Move-Item -LiteralPath $shortcutPath -Destination $removedShortcutPath
-  Write-Host "The launcher shortcut was moved to ${removedShortcutPath}."
+$shortcutPaths = @(
+  (Join-Path $startMenuPrograms "Furigana for Spotify.lnk"),
+  (Join-Path $startMenuPrograms "Spotify with Furigana.lnk")
+)
+foreach ($shortcutPath in $shortcutPaths) {
+  if (Test-Path -LiteralPath $shortcutPath) {
+    $removedShortcutPath = "${shortcutPath}.removed-${timestamp}"
+    Move-Item -LiteralPath $shortcutPath -Destination $removedShortcutPath
+    Write-Host "The launcher shortcut was moved to ${removedShortcutPath}."
+  }
 }
 
 Invoke-Spicetify -Executable $spicetifyExecutable -Arguments @("auto")
