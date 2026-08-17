@@ -45,6 +45,34 @@
   background: color-mix(in srgb, var(--spice-card) 78%, transparent);
 }
 
+.spotify-furigana-app__online {
+  margin-top: 18px;
+  align-items: flex-start;
+}
+
+.spotify-furigana-app__online > div {
+  max-width: 560px;
+}
+
+.spotify-furigana-app__online-status {
+  color: var(--spice-button) !important;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.spotify-furigana-app__privacy {
+  max-width: 540px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.spotify-furigana-app__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 .spotify-furigana-app__panel-heading {
   display: flex;
   align-items: flex-start;
@@ -207,5 +235,9 @@
 
   .spotify-furigana-app__panel-heading {
     align-items: center;
+  }
+
+  .spotify-furigana-app__online {
+    flex-direction: column;
   }
 }

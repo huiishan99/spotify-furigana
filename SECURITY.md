@@ -14,4 +14,6 @@ You can expect an initial acknowledgement within seven days. A public advisory o
 
 ## Scope
 
-Furigana for Spotify processes lyrics already rendered by Spotify and performs reading conversion locally. Reports involving unsafe DOM insertion, unexpected network requests, release package tampering, or installer path handling are especially useful.
+Furigana for Spotify processes lyrics already rendered by Spotify and performs reading conversion locally by default. If the user explicitly enables experimental online accurate readings, the extension sends the current public track title and artist to the GD Studio search endpoint, then requests the selected track's synchronized lyrics and romanization from NetEase Cloud Music. The Spotify album name is used only for local result ranking. It does not send Spotify credentials, cookies, or the lyrics rendered by Spotify. Matched reading data is cached only in Spotify's local storage.
+
+Reports involving unsafe DOM insertion, network requests outside the two disclosed online-reading hosts, accidental online-mode activation, release package tampering, or installer path handling are especially useful.

@@ -56,6 +56,7 @@ describe("furigana settings", () => {
       size: 0.6,
       opacity: 0.7,
       gap: 4,
+      onlineReadings: true,
     });
 
     expect(getFuriganaSettings()).toEqual({
@@ -64,7 +65,8 @@ describe("furigana settings", () => {
       size: 0.6,
       opacity: 0.7,
       gap: 4,
+      onlineReadings: true,
     });
-    expect(values.size).toBe(5);
+    expect(values.size).toBe(6);
   });
 });

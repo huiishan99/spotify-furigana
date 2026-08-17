@@ -24,4 +24,16 @@ describe("local reading engine", () => {
 
     expect(converted).toContain(expectedReading);
   });
+
+  it("prefers a synchronized sung reading when one is available", async () => {
+    const converted = await convertToFurigana(
+      "二人だけの空",
+      dictionaryPath,
+      "hiragana",
+      "fu ta ri da ke no so ra",
+    );
+
+    expect(converted).toContain("<rt>ふたり</rt>");
+    expect(converted).not.toContain("<rt>にん</rt>");
+  });
 });

@@ -1,6 +1,7 @@
 import Kuroshiro from "kuroshiro";
 import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
 import type { ReadingMode } from "./settings";
+import { convertSungReadingToFurigana } from "./online-readings";
 
 let enginePromise: Promise<Kuroshiro> | undefined;
 let activeDictionaryPath: string | undefined;
@@ -29,7 +30,19 @@ export async function convertToFurigana(
   value: string,
   dictionaryPath: string,
   readingMode: ReadingMode = "hiragana",
+  sungRomanization?: string,
 ): Promise<string> {
+  if (sungRomanization) {
+    const aligned = convertSungReadingToFurigana(
+      value,
+      sungRomanization,
+      readingMode,
+    );
+    if (aligned) {
+      return aligned;
+    }
+  }
+
   const engine = await getEngine(dictionaryPath);
   return engine.convert(value, {
     mode: "furigana",

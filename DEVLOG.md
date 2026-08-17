@@ -1,5 +1,19 @@
 # Devlog
 
+## 2026-08-17 — v0.3.0 synchronized accurate readings
+
+- 新增默认关闭的“在线精准读音（实验性）”：用户主动开启后，只发送公开曲名与歌手进行搜索，并在本机用 Spotify 专辑名辅助筛选网易云曲目；弱匹配、无结果、超时和错误都会自动回退本地词典。
+- 将同步罗马音转换为假名并按歌词中的假名锚点对齐汉字块，支持平假名、片假名和罗马字显示；实测数据可把 `二人だけの空が広がる夜に` 标成 `ふたりだけのそらがひろがるよるに`，不再依赖 Kuromoji 对 `二人` 的拆字猜测。
+- 成功结果本地缓存 30 天、无结果缓存 6 小时，最多保留 30 首歌；设置页显示查询状态、明确两个外部主机及发送字段，并提供清除缓存按钮。不会发送 Spotify 凭据、Cookie、账号数据或 Spotify 当前渲染的歌词。
+- 新增 WanaKana 5.3.1 及完整 MIT 许可证，补充曲目匹配、时间戳配对、罗马音转换、助词发音、缓存期限和在线优先回退测试；版本提升至 `0.3.0`。
+- 在 Microsoft Store Spotify 1.2.96.518 + Spicetify 2.44.0 完成 v0.3.0 覆盖安装、设置开关、真实外部请求、无结果回退、缓存清除后立即重查与 59 个实时 ruby 元素验证；已验证目标同步样例能在 Spotify 运行时取回，最终行对齐仍以自动化集成测试为证据边界。
+
+## 2026-08-17 — Original Windows launcher icon
+
+- 将启动器从 Spotify 官方图标改为项目原创的「ふ」Logo，并将名称统一为品牌规范更清晰的 `Furigana for Spotify`；旧 `Spotify with Furigana` 快捷方式会在升级时保留为带时间戳的备份。
+- 新增确定性的多尺寸 Windows ICO 生成脚本，并把图标纳入构建、Release 包、安装器完整性检查及安装器测试。
+- 安装器现在将快捷方式图标指向已安装 Custom App 内的 `launcher.ico`；三语 README 同步说明入口识别方式，版本提升至 `0.2.3`。
+
 ## 2026-08-17 — Persistent Windows installation
 
 - Release 安装器会识别 spotify.com 与 Microsoft Store 两种 Windows 客户端，并在同时安装两种版本时停止，避免配置和快捷方式指向不同客户端。
@@ -95,9 +109,3 @@
 - 支持 Spotify 的 `lyrics-line` 与 `fullscreen-lyric` 两类歌词节点。
 - 增加开关弹窗、单元测试、生产构建和 GitHub Actions CI。
 - 明确 MVP 边界：尚未完成 Chrome Web Store 发布，也未在所有 Spotify 账号/地区布局中验证。
-
-## 2026-08-17 — Original Windows launcher icon
-
-- 将启动器从 Spotify 官方图标改为项目原创的「ふ」Logo，并将名称统一为品牌规范更清晰的 `Furigana for Spotify`；旧 `Spotify with Furigana` 快捷方式会在升级时保留为带时间戳的备份。
-- 新增确定性的多尺寸 Windows ICO 生成脚本，并把图标纳入构建、Release 包、安装器完整性检查及安装器测试。
-- 安装器现在将快捷方式图标指向已安装 Custom App 内的 `launcher.ico`；三语 README 同步说明入口识别方式，版本提升至 `0.2.3`。

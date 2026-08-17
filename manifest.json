@@ -1,6 +1,6 @@
 {
   "name": "Furigana for Spotify",
-  "description": "Show customizable hiragana, katakana, or romaji readings above Japanese kanji in Spotify lyrics on Windows.",
+  "description": "Show customizable Japanese lyric readings with local analysis and optional synchronized pronunciation matching on Spotify for Windows.",
   "preview": "assets/marketing/demo.gif",
   "readme": "README.md",
   "authors": [

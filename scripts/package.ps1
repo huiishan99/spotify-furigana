@@ -42,7 +42,8 @@ $thirdPartyLicenseInputs = @(
   @{ Source = "node_modules\lodash\LICENSE"; Destination = "lodash-4.18.1-LICENSE.txt" },
   @{ Source = "node_modules\zlibjs\LICENSE"; Destination = "zlibjs-0.3.1-LICENSE.txt" },
   @{ Source = "node_modules\@babel\runtime\LICENSE"; Destination = "babel-runtime-7.29.7-LICENSE.txt" },
-  @{ Source = "node_modules\path-browserify\LICENSE"; Destination = "path-browserify-1.0.1-LICENSE.txt" }
+  @{ Source = "node_modules\path-browserify\LICENSE"; Destination = "path-browserify-1.0.1-LICENSE.txt" },
+  @{ Source = "node_modules\wanakana\LICENSE"; Destination = "wanakana-5.3.1-LICENSE.txt" }
 )
 
 Assert-PathInside -Root $projectRoot -Candidate $releaseRoot

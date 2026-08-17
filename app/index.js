@@ -7,7 +7,11 @@ const settingKeys = {
   size: "spotify-furigana:size",
   opacity: "spotify-furigana:opacity",
   gap: "spotify-furigana:gap",
+  onlineReadings: "spotify-furigana:online-readings-enabled",
 };
+const onlineStatusKey = "spotify-furigana:online-status";
+const onlineStatusEvent = "spotify-furigana:online-status-change";
+const onlineCacheClearEvent = "spotify-furigana:online-cache-clear";
 
 const defaultSettings = {
   enabled: true,
@@ -15,6 +19,7 @@ const defaultSettings = {
   size: 0.46,
   opacity: 0.82,
   gap: 0,
+  onlineReadings: false,
 };
 
 const readingModes = ["hiragana", "katakana", "romaji"];
@@ -46,7 +51,27 @@ function readSettings() {
       1,
     ),
     gap: readNumber(settingKeys.gap, defaultSettings.gap, 0, 8),
+    onlineReadings:
+      Spicetify.LocalStorage.get(settingKeys.onlineReadings) === "true",
   };
+}
+
+function readOnlineStatus() {
+  const raw = Spicetify.LocalStorage.get(onlineStatusKey);
+  if (!raw) {
+    return { state: "idle", message: "在线精准读音未开启" };
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed?.state === "string" && typeof parsed?.message === "string") {
+      return parsed;
+    }
+  } catch {
+    // Ignore stale or malformed status data.
+  }
+
+  return { state: "idle", message: "等待当前歌曲状态" };
 }
 
 function persistSettings(settings) {
@@ -83,6 +108,7 @@ function SettingSlider({ label, value, min, max, step, valueLabel, onChange }) {
 
 function SpotifyFuriganaApp() {
   const [settings, setSettings] = react.useState(readSettings);
+  const [onlineStatus, setOnlineStatus] = react.useState(readOnlineStatus);
   const settingsRef = react.useRef(settings);
   settingsRef.current = settings;
 
@@ -105,6 +131,14 @@ function SpotifyFuriganaApp() {
     return () => window.removeEventListener(settingEvent, syncSettings);
   }, []);
 
+  react.useEffect(() => {
+    const syncOnlineStatus = (event) => {
+      setOnlineStatus(event.detail ?? readOnlineStatus());
+    };
+    window.addEventListener(onlineStatusEvent, syncOnlineStatus);
+    return () => window.removeEventListener(onlineStatusEvent, syncOnlineStatus);
+  }, []);
+
   const runtimeVersion = Spicetify.Config?.version || "unknown";
   const runtimeReady = Boolean(
     Spicetify.Player && Spicetify.LocalStorage && Spicetify.Playbar,
@@ -122,7 +156,7 @@ function SpotifyFuriganaApp() {
     react.createElement(
       "p",
       { className: "spotify-furigana-app__lead" },
-      "在 Windows Spotify 桌面端的日语歌词汉字上方显示平假名、片假名或罗马字。分析完全在本地完成。",
+      "在 Windows Spotify 桌面端的日语歌词汉字上方显示平假名、片假名或罗马字。默认本地分析，也可主动开启同步读音匹配。",
     ),
     react.createElement(
       "div",
@@ -146,6 +180,55 @@ function SpotifyFuriganaApp() {
           onClick: () => updateSettings({ enabled: !settings.enabled }),
         },
         settings.enabled ? "关闭" : "开启",
+      ),
+    ),
+    react.createElement(
+      "div",
+      { className: "spotify-furigana-app__card spotify-furigana-app__online" },
+      react.createElement(
+        "div",
+        null,
+        react.createElement("strong", null, "在线精准读音（实验性）"),
+        react.createElement(
+          "p",
+          null,
+          "使用同步罗马音修正歌词中的特殊唱法；无结果时自动回退本地词典。",
+        ),
+        react.createElement(
+          "p",
+          { className: "spotify-furigana-app__online-status" },
+          onlineStatus.message,
+        ),
+        react.createElement(
+          "p",
+          { className: "spotify-furigana-app__privacy" },
+          "开启后会向 GD Studio 搜索接口发送公开的歌曲名和歌手，并从网易云音乐读取匹配歌曲的歌词与罗马音。专辑名只在本机用于筛选；结果仅缓存在本机，不会上传 Spotify 歌词。",
+        ),
+      ),
+      react.createElement(
+        "div",
+        { className: "spotify-furigana-app__actions" },
+        react.createElement(
+          "button",
+          {
+            className: "spotify-furigana-app__reset",
+            type: "button",
+            onClick: () =>
+              window.dispatchEvent(new CustomEvent(onlineCacheClearEvent)),
+          },
+          "清除缓存",
+        ),
+        react.createElement(
+          "button",
+          {
+            className: "spotify-furigana-app__toggle",
+            type: "button",
+            "aria-pressed": settings.onlineReadings,
+            onClick: () =>
+              updateSettings({ onlineReadings: !settings.onlineReadings }),
+          },
+          settings.onlineReadings ? "关闭" : "开启",
+        ),
       ),
     ),
     react.createElement(

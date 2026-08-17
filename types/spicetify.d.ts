@@ -11,7 +11,24 @@ interface SpicetifyGlobal {
     custom_apps?: string[];
   };
   Platform: unknown;
-  Player: unknown;
+  Player: {
+    data?: {
+      item?: {
+        uri?: string;
+        name?: string;
+        metadata?: Record<string, string | undefined>;
+      };
+    };
+    addEventListener(type: string, callback: () => void): void;
+    removeEventListener(type: string, callback: () => void): void;
+  };
+  CosmosAsync: {
+    get<T = unknown>(
+      url: string,
+      body?: unknown,
+      headers?: Record<string, string>,
+    ): Promise<T>;
+  };
   LocalStorage: {
     get(key: string): string | null;
     set(key: string, value: string): void;

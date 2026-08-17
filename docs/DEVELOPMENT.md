@@ -44,6 +44,7 @@ Key entry points:
 - `src/reading-engine.ts`: performs local reading conversion and safe DOM construction;
 - `src/settings.ts`: validates and persists the display configuration;
 - `src/icon.ts`: provides the original 「ふ」 playbar mark;
+- `src/online-readings.ts`: strictly matches optional NetEase synchronized romanization, aligns it to Spotify lyric lines, and manages the bounded local cache;
 - `app/index.js`: renders the Spicetify settings page;
 - `scripts/build.mjs`: bundles the extension and copies the local dictionary.
 

@@ -12,10 +12,24 @@ import {
 import { LYRIC_SELECTOR } from "./lyrics";
 import { PLAYBAR_FU_ICON } from "./icon";
 import { normalizeLyricText, shouldAnnotateLyric } from "./text";
+import {
+  clearOnlineReadingCache,
+  fetchOnlineReadingResult,
+  findOnlineRomanization,
+  getCachedOnlineReading,
+  ONLINE_CACHE_CLEAR_EVENT,
+  ONLINE_STATUS_EVENT,
+  ONLINE_STATUS_KEY,
+  type OnlineReadingIndex,
+  type OnlineReadingStatus,
+  type OnlineTrackMetadata,
+  setCachedOnlineReading,
+} from "./online-readings";
 
 const STATE_ATTRIBUTE = "data-spotify-furigana";
 const STYLE_ID = "spotify-furigana-styles";
 const READY_INTERVAL_MS = 100;
+const ONLINE_REQUEST_TIMEOUT_MS = 10_000;
 
 function injectStyles(): void {
   if (document.getElementById(STYLE_ID)) {
@@ -64,6 +78,7 @@ function isSpicetifyReady(): boolean {
     Boolean(Spicetify.Player) &&
     Boolean(Spicetify.Platform) &&
     Boolean(Spicetify.LocalStorage) &&
+    Boolean(Spicetify.CosmosAsync) &&
     Boolean(Spicetify.Playbar?.Button) &&
     typeof Spicetify.showNotification === "function"
   );
@@ -72,6 +87,55 @@ function isSpicetifyReady(): boolean {
 async function waitForSpicetify(): Promise<void> {
   while (!isSpicetifyReady()) {
     await new Promise((resolve) => window.setTimeout(resolve, READY_INTERVAL_MS));
+  }
+}
+
+function getCurrentTrackMetadata(): OnlineTrackMetadata | null {
+  const item = Spicetify.Player.data?.item;
+  const metadata = item?.metadata ?? {};
+  const uri = item?.uri;
+  const title = item?.name ?? metadata.title;
+  const artist =
+    metadata.artist_name ?? metadata.artist ?? metadata.artist_names;
+  const album = metadata.album_title ?? metadata.album_name ?? "";
+
+  if (
+    typeof uri !== "string" ||
+    !uri.startsWith("spotify:track:") ||
+    typeof title !== "string" ||
+    !title.trim() ||
+    typeof artist !== "string" ||
+    !artist.trim()
+  ) {
+    return null;
+  }
+
+  return {
+    uri,
+    title: title.trim(),
+    artist: artist.trim(),
+    album: typeof album === "string" ? album.trim() : "",
+  };
+}
+
+async function requestOnlineJson(url: string): Promise<unknown> {
+  let timeoutId: number | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = window.setTimeout(
+      () => reject(new Error("Online reading request timed out.")),
+      ONLINE_REQUEST_TIMEOUT_MS,
+    );
+  });
+
+  try {
+    return await Promise.race([
+      Spicetify.CosmosAsync.get(url),
+      timeout,
+    ]);
+  } finally {
+    if (timeoutId !== undefined) {
+      window.clearTimeout(timeoutId);
+    }
   }
 }
 
@@ -90,6 +154,16 @@ async function main(): Promise<void> {
   let engineUnavailable = false;
   let scanFrame: number | undefined;
   let reportedEngineError = false;
+  let activeOnlineTrackUri: string | undefined;
+  let onlineReadings: OnlineReadingIndex | undefined;
+  let onlineLoadGeneration = 0;
+
+  function publishOnlineStatus(status: OnlineReadingStatus): void {
+    Spicetify.LocalStorage.set(ONLINE_STATUS_KEY, JSON.stringify(status));
+    window.dispatchEvent(
+      new CustomEvent(ONLINE_STATUS_EVENT, { detail: status }),
+    );
+  }
 
   function forgetLine(line: HTMLElement): void {
     line.removeAttribute(STATE_ATTRIBUTE);
@@ -116,6 +190,89 @@ async function main(): Promise<void> {
     document
       .querySelectorAll<HTMLElement>(`[${STATE_ATTRIBUTE}]`)
       .forEach(restoreLine);
+  }
+
+  async function refreshOnlineReadings(): Promise<void> {
+    const generation = ++onlineLoadGeneration;
+    const track = getCurrentTrackMetadata();
+    activeOnlineTrackUri = track?.uri;
+    onlineReadings = undefined;
+
+    if (!settings.onlineReadings) {
+      publishOnlineStatus({
+        state: "idle",
+        message: "在线精准读音未开启",
+      });
+      return;
+    }
+
+    if (!track) {
+      publishOnlineStatus({
+        state: "fallback",
+        message: "当前没有可查询的 Spotify 曲目，使用本地词典",
+      });
+      return;
+    }
+
+    const cached = getCachedOnlineReading(Spicetify.LocalStorage, track.uri);
+    if (cached.found) {
+      onlineReadings = cached.result?.readings;
+      publishOnlineStatus(
+        cached.result
+          ? { state: "ready", message: "已从本地缓存加载同步读音" }
+          : {
+              state: "fallback",
+              message: "当前歌曲暂无同步读音，使用本地词典",
+            },
+      );
+      restoreAll();
+      scheduleScan();
+      return;
+    }
+
+    publishOnlineStatus({
+      state: "loading",
+      message: "正在查询当前歌曲的同步读音…",
+    });
+
+    try {
+      const result = await fetchOnlineReadingResult(track, requestOnlineJson);
+      if (
+        generation !== onlineLoadGeneration ||
+        activeOnlineTrackUri !== track.uri
+      ) {
+        return;
+      }
+
+      setCachedOnlineReading(Spicetify.LocalStorage, track.uri, result);
+      onlineReadings = result?.readings;
+      publishOnlineStatus(
+        result
+          ? {
+              state: "ready",
+              message: `已匹配 ${Object.keys(result.readings).length} 行同步读音`,
+            }
+          : {
+              state: "fallback",
+              message: "当前歌曲暂无同步读音，使用本地词典",
+            },
+      );
+    } catch (error: unknown) {
+      if (generation !== onlineLoadGeneration) {
+        return;
+      }
+      console.warn(
+        "[Furigana for Spotify] Online readings were unavailable.",
+        error,
+      );
+      publishOnlineStatus({
+        state: "error",
+        message: "在线读音暂时不可用，已自动使用本地词典",
+      });
+    }
+
+    restoreAll();
+    scheduleScan();
   }
 
   function getAnnotatedSource(line: HTMLElement): string {
@@ -148,6 +305,14 @@ async function main(): Promise<void> {
       return;
     }
 
+    const sungRomanization =
+      activeOnlineTrackUri === getCurrentTrackMetadata()?.uri
+        ? findOnlineRomanization(onlineReadings, source)
+        : undefined;
+    if (engineUnavailable && !sungRomanization) {
+      return;
+    }
+
     originalNodes.set(line, Array.from(line.childNodes));
     sourceText.set(line, source);
     const generation = ++generationCounter;
@@ -159,6 +324,7 @@ async function main(): Promise<void> {
         source,
         dictionaryPath,
         settings.readingMode,
+        sungRomanization,
       );
 
       if (lineGeneration.get(line) !== generation) {
@@ -203,7 +369,7 @@ async function main(): Promise<void> {
 
   function scan(): void {
     scanFrame = undefined;
-    if (!enabled || engineUnavailable) {
+    if (!enabled || (engineUnavailable && !onlineReadings)) {
       return;
     }
 
@@ -229,8 +395,15 @@ async function main(): Promise<void> {
       nextSettings.size !== settings.size ||
       nextSettings.opacity !== settings.opacity ||
       nextSettings.gap !== settings.gap;
+    const onlineReadingsChanged =
+      nextSettings.onlineReadings !== settings.onlineReadings;
 
-    if (!enabledChanged && !readingModeChanged && !appearanceChanged) {
+    if (
+      !enabledChanged &&
+      !readingModeChanged &&
+      !appearanceChanged &&
+      !onlineReadingsChanged
+    ) {
       return;
     }
 
@@ -241,7 +414,7 @@ async function main(): Promise<void> {
     playbarButton.active = enabled;
     playbarButton.label = enabled ? "关闭歌词振假名" : "开启歌词振假名";
 
-    if (readingModeChanged) {
+    if (readingModeChanged || onlineReadingsChanged) {
       restoreAll();
     }
 
@@ -250,6 +423,13 @@ async function main(): Promise<void> {
       scheduleScan();
     } else if (!enabled && enabledChanged) {
       restoreAll();
+    }
+
+    if (onlineReadingsChanged) {
+      if (enabled) {
+        scheduleScan();
+      }
+      void refreshOnlineReadings();
     }
 
     if (announce) {
@@ -283,6 +463,24 @@ async function main(): Promise<void> {
     }
   });
 
+  window.addEventListener(ONLINE_CACHE_CLEAR_EVENT, () => {
+    onlineLoadGeneration += 1;
+    clearOnlineReadingCache(Spicetify.LocalStorage);
+    onlineReadings = undefined;
+    restoreAll();
+    if (settings.onlineReadings) {
+      void refreshOnlineReadings();
+    } else {
+      publishOnlineStatus({
+        state: "idle",
+        message: "在线缓存已清除",
+      });
+    }
+    if (enabled && !settings.onlineReadings) {
+      scheduleScan();
+    }
+  });
+
   const observer = new MutationObserver(scheduleScan);
   observer.observe(document.body, {
     childList: true,
@@ -291,6 +489,11 @@ async function main(): Promise<void> {
   });
 
   applyAppearance(settings);
+  Spicetify.Player.addEventListener("songchange", () => {
+    restoreAll();
+    void refreshOnlineReadings();
+  });
+  void refreshOnlineReadings();
   scheduleScan();
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "spotify-furigana",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "A Spicetify desktop extension that adds furigana to Japanese lyrics in Spotify for Windows.",
@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "kuroshiro": "^1.2.0",
-    "kuroshiro-analyzer-kuromoji": "^1.1.0"
+    "kuroshiro-analyzer-kuromoji": "^1.1.0",
+    "wanakana": "^5.3.1"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

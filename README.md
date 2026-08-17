@@ -11,7 +11,7 @@
 <p align="center">
   <strong>Show hiragana, katakana, or romaji readings above Japanese kanji in Spotify lyrics on Windows.</strong>
   <br />
-  Local processing · No lyrics API · No lyrics uploaded
+  Local by default · Optional synchronized readings · No Spotify credentials required
 </p>
 
 <p align="center">
@@ -50,9 +50,10 @@ The extension enhances lyrics already displayed by Spotify and uses standard HTM
 ## Why use it
 
 - **Works with Spotify's lyrics view**: automatically processes the current desktop layout and known fullscreen lyrics layouts.
-- **Runs entirely on your machine**: Kuroshiro + Kuromoji perform tokenization and reading conversion locally.
+- **Local by default**: Kuroshiro + Kuromoji perform tokenization and reading conversion on your machine without contacting a lyrics service.
+- **Optional accurate-reading mode**: use synchronized romanization when available to handle readings such as `二人` → `ふたり` and intentional lyric pronunciations.
 - **Choose how readings appear**: switch between hiragana, katakana, and romaji, then tune size, opacity, and vertical spacing.
-- **Does not replace the lyrics source**: it only enhances text already visible in Spotify and does not fetch, store, or redistribute lyrics.
+- **Keeps Spotify's lyrics view**: it enhances the text already visible in Spotify instead of replacing the player or its timing.
 - **Easy to toggle**: use the lyrics button in the player bar or the custom app page in the sidebar.
 
 ## Requirements
@@ -113,8 +114,15 @@ Open **Furigana for Spotify** from Spotify's sidebar. The settings page lets you
 - adjust opacity from 40% to 100%;
 - add up to 8 px of vertical spacing;
 - restore the display defaults with one click.
+- enable experimental online accurate readings and clear their local cache.
 
 Changes are saved locally and apply immediately.
+
+## Optional accurate readings and privacy
+
+Online accurate readings are **off by default**. When enabled, the extension sends the current public track title and artist to the GD Studio search endpoint, then requests the selected track's synchronized lyrics and romanization from NetEase Cloud Music. The Spotify album name is used only for local result ranking. It uses that pronunciation data only to annotate the matching Spotify lyric line.
+
+The extension does not send Spotify credentials, cookies, account data, or the lyrics rendered by Spotify. Successful matches are cached locally for up to 30 days; unavailable matches are remembered for 6 hours to avoid repeated requests, with at most 30 tracks retained. The settings page can clear this cache at any time. Provider availability and song coverage are not guaranteed, so the local dictionary remains the automatic fallback.
 
 ## Uninstall
 
@@ -126,13 +134,14 @@ powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 
 - **No Furigana page in the sidebar:** run `spicetify apply`, then restart Spotify.
 - **The button appears but lyrics are unchanged:** make sure the song has Japanese lyrics containing kanji, enable the lyrics button, and wait briefly for the first local dictionary load.
+- **Online accurate readings stay on the local fallback:** the provider may not have synchronized romanization, the album/version may not match safely, or the service may be temporarily unavailable. The extension deliberately refuses weak matches.
 - **The app disappeared after a Spotify update:** close Spotify and open **Furigana for Spotify** from the Start menu. If needed, run `spicetify backup apply` once.
 - **The installer detects two Spotify installations:** keep either the Microsoft Store build or the [spotify.com build](https://www.spotify.com/download/windows/), remove the other, open the retained app for at least 60 seconds, then run the installer again.
 - **Microsoft Store Spotify opens without Furigana:** close it and use **Furigana for Spotify** from the Start menu; do not use the regular Store shortcut.
 
 ## Known limitations
 
-- Names, place names, wordplay, and intentionally unusual lyric readings may be annotated incorrectly.
+- Local mode can misread names, place names, wordplay, and intentionally unusual pronunciations. Online accurate readings improve supported songs but cannot cover every track or line.
 - Spotify updates can change the lyrics DOM. If the extension stops working, include your Spotify and Spicetify versions in the issue.
 - The project currently targets Spotify desktop for Windows only. Web Player, macOS, and mobile are not supported.
 
