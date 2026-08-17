@@ -58,7 +58,7 @@ The extension enhances lyrics already displayed by Spotify and uses standard HTM
 ## Requirements
 
 - Windows 10 or Windows 11
-- Spotify desktop for Windows
+- Spotify for Windows: the [spotify.com desktop build](https://www.spotify.com/download/windows/) or Microsoft Store build (install only one)
 - [Spicetify](https://spicetify.app/docs/getting-started)
 
 Verified on real hardware with:
@@ -87,12 +87,12 @@ See the [compatibility matrix](./docs/COMPATIBILITY.md) for more version informa
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-The installer backs up an existing installation, installs and enables the app, and applies the Spicetify configuration.
+The installer detects your single Spotify installation, backs up an existing Furigana installation, installs and enables the app, applies the Spicetify configuration, and creates a **Spotify with Furigana** launcher in the Start menu.
 
-Restart Spotify, play a Japanese song with lyrics, and open the lyrics view. The local dictionary may take a moment to load on the first conversion.
+After installation, open **Spotify with Furigana** from the Start menu. This launcher checks and reapplies Spicetify before opening Spotify, so the extension survives normal restarts and can recover automatically after supported Spotify updates. Play a Japanese song with lyrics and open the lyrics view; the local dictionary may take a moment to load on the first conversion.
 
-> [!NOTE]
-> Spicetify support for the Microsoft Store build of Spotify is limited. If your regular shortcut does not load the extension, launch Spotify with `spicetify auto`. See the [Spicetify FAQ](https://spicetify.app/docs/faq) if you encounter `Cannot find pref_file`.
+> [!IMPORTANT]
+> Microsoft Store users must launch **Spotify with Furigana** instead of Spotify's regular shortcut. The generated launcher runs `spicetify auto` with the required app directory; opening the Store app directly will show the unmodified Spotify UI. Spicetify 2.44 officially lists support through Spotify 1.2.93; the Store 1.2.96 setup above is real-client tested by this project but remains outside Spicetify's official range.
 
 ## Update
 
@@ -126,8 +126,9 @@ powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 
 - **No Furigana page in the sidebar:** run `spicetify apply`, then restart Spotify.
 - **The button appears but lyrics are unchanged:** make sure the song has Japanese lyrics containing kanji, enable the lyrics button, and wait briefly for the first local dictionary load.
-- **The app disappeared after a Spotify update:** run `spicetify backup apply` and restart Spotify.
-- **Microsoft Store Spotify does not load Spicetify:** try launching it with `spicetify auto` and check the [Spicetify FAQ](https://spicetify.app/docs/faq).
+- **The app disappeared after a Spotify update:** close Spotify and open **Spotify with Furigana** from the Start menu. If needed, run `spicetify backup apply` once.
+- **The installer detects two Spotify installations:** keep either the Microsoft Store build or the [spotify.com build](https://www.spotify.com/download/windows/), remove the other, open the retained app for at least 60 seconds, then run the installer again.
+- **Microsoft Store Spotify opens without Furigana:** close it and use **Spotify with Furigana** from the Start menu; do not use the regular Store shortcut.
 
 ## Known limitations
 

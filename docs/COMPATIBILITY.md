@@ -6,9 +6,12 @@ This page separates real-client verification from automated layout coverage. A s
 
 | Date | Windows | Spotify Desktop | Spicetify | Lyrics layout | Result |
 | --- | --- | --- | --- | --- | --- |
+| 2026-08-17 | Windows 11 Pro 10.0.26200 | Microsoft Store 1.2.96.518 | 2.44.0 | `.lyrics-lyricsContent-text` | Pass (Release install + full `auto` relaunch) |
 | 2026-08-16 | Windows 11 Pro 10.0.26200 | Microsoft Store 1.2.96.518 | 2.44.0 | `.lyrics-lyricsContent-text` | Pass |
 
-The real-client check covered extension injection, playbar toggling, local dictionary loading, and live furigana rendering in the standard lyrics view.
+The 2026-08-16 real-client check covered extension injection, playbar toggling, local dictionary loading, and live furigana rendering in the standard lyrics view. The 2026-08-17 check covered the packaged v0.2.2 installer, Store path configuration, applied-build hashes, the generated `spicetify auto` launcher, a complete close/relaunch cycle with `--app-directory`, and the `Furigana for Spotify` control in the Windows accessibility tree. The regular Microsoft Store shortcut remains unsupported because it opens the unmodified UI.
+
+Spicetify 2.44.0 officially lists Spotify compatibility through 1.2.93. The 1.2.96.518 rows record this project's direct test evidence and do not expand Spicetify's official compatibility claim.
 
 ## Automated compatibility contracts
 

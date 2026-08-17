@@ -1,5 +1,14 @@
 # Devlog
 
+## 2026-08-17 — Persistent Windows installation
+
+- Release 安装器会识别 spotify.com 与 Microsoft Store 两种 Windows 客户端，并在同时安装两种版本时停止，避免配置和快捷方式指向不同客户端。
+- 安装器会主动设置对应的 `spotify_path` 与 `prefs_path`，先无重启执行 `spicetify apply`，仅在 Spotify 更新导致旧备份不可用时回退到 `spicetify backup apply`，并移除可绕过实际应用步骤的 `-SkipApply`。
+- 安装后在开始菜单创建 **Spotify with Furigana** 自修复启动入口，并立即通过 `spicetify auto` 启动；Microsoft Store 版由此获得必需的 `--app-directory`，Spotify 更新后也会检查并重新应用修改，卸载器会一并移除该入口。
+- Spicetify 查找逻辑兼容常规 `PATH`、官方脚本目录和 WinGet 安装目录，并新增安装契约测试。
+- 在 Microsoft Store Spotify 1.2.96.518 + Spicetify 2.44.0 上完成安装包、应用产物哈希、完整关闭/自修复启动及无障碍界面树验证；三语文档同时标明 Spicetify 2.44 官方兼容范围只到 1.2.93。
+- 将三语用户文档与 Release 离线说明更新为持久启动流程，补丁版本提升为 `0.2.2`。
+
 ## 2026-08-16 — Recognizable playbar icon
 
 - 将播放器底部的通用歌词图标替换为项目专属「ふ」图标，并保留顶部注音条元素，使其在小尺寸下也能关联到 Furigana for Spotify。

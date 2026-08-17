@@ -58,7 +58,7 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
 ## 必要環境
 
 - Windows 10 または Windows 11
-- Windows版Spotifyデスクトップアプリ
+- Windows版Spotify：[spotify.com版](https://www.spotify.com/download/windows/)またはMicrosoft Store版（どちらか一方だけをインストール）
 - [Spicetify](https://spicetify.app/docs/getting-started)
 
 実機で確認済みの構成：
@@ -87,12 +87,12 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-インストーラーは既存バージョンをバックアップし、アプリのインストールと有効化、Spicetify設定の適用を行います。
+インストーラーは一つだけインストールされたSpotifyを検出し、既存のFurigana版をバックアップしてアプリを有効化し、Spicetify設定を適用したうえで、スタートメニューに **Spotify with Furigana** ランチャーを作成します。
 
-Spotifyを再起動し、歌詞のある日本語の曲を再生して歌詞画面を開きます。初回変換時はローカル辞書の読み込みに少し時間がかかります。
+インストール後は、スタートメニューから **Spotify with Furigana** を開いてください。Spotifyを開く前にSpicetifyを確認して再適用するため、通常の再起動後も拡張機能が維持され、対応済みのSpotify更新後も自動で復旧できます。歌詞のある日本語の曲を再生して歌詞画面を開いてください。初回変換時はローカル辞書の読み込みに少し時間がかかります。
 
-> [!NOTE]
-> Microsoft Store版Spotifyに対するSpicetifyのサポートは限定的です。通常のショートカットからプラグインが読み込まれない場合は `spicetify auto` で起動してください。`Cannot find pref_file` が表示される場合は [Spicetify FAQ](https://spicetify.app/docs/faq) を参照してください。
+> [!IMPORTANT]
+> Microsoft Storeユーザーは、通常のSpotifyショートカットではなく **Spotify with Furigana** を使用してください。生成されたランチャーは `spicetify auto` で必要なアプリディレクトリを指定します。Storeアプリを直接開くと未変更のSpotify UIになります。Spicetify 2.44の公式対応範囲はSpotify 1.2.93までです。上記のStore 1.2.96構成は本プロジェクトで実機確認済みですが、Spicetifyの公式範囲外です。
 
 ## 更新
 
@@ -126,8 +126,9 @@ powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 
 - **サイドバーにFuriganaページがない：**`spicetify apply` を実行し、Spotifyを再起動してください。
 - **ボタンはあるが歌詞が変わらない：**漢字を含む日本語歌詞がある曲か、歌詞ボタンがオンかを確認し、初回のローカル辞書読み込みを少し待ってください。
-- **Spotify更新後にアプリが消えた：**`spicetify backup apply` を実行し、Spotifyを再起動してください。
-- **Microsoft Store版SpotifyでSpicetifyが読み込まれない：**`spicetify auto` での起動を試し、[Spicetify FAQ](https://spicetify.app/docs/faq)を確認してください。
+- **Spotify更新後にアプリが消えた：**Spotifyを閉じ、スタートメニューから **Spotify with Furigana** を開いてください。必要なら `spicetify backup apply` を一度実行します。
+- **インストーラーがSpotifyを二つ検出した：**Microsoft Store版または[spotify.com版](https://www.spotify.com/download/windows/)のどちらか一方を残して他方を削除し、残した版を60秒以上開いてから再実行してください。
+- **Microsoft Store版を開いてもFuriganaがない：**閉じて、スタートメニューの **Spotify with Furigana** を使用してください。通常のStoreショートカットは使用しません。
 
 ## 既知の制限
 
