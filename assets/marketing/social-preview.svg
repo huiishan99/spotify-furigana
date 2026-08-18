@@ -30,7 +30,7 @@
     <tspan x="68" dy="72">now readable.</tspan>
   </text>
   <text x="70" y="462" fill="#b8c5c3" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="23" font-weight="450">
-    Real-time furigana for Spotify on Windows.
+    Real-time furigana for Spotify desktop.
   </text>
 
   <g transform="translate(68 510)">

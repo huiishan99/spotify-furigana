@@ -10,7 +10,7 @@ Thanks for helping make Japanese lyrics easier to read.
 
 Compatibility reports are most useful when they include:
 
-- Windows version
+- operating system and version
 - Spotify version and installation source
 - Spicetify version
 - Furigana for Spotify version
@@ -23,11 +23,12 @@ Requirements: Node.js 22 or later and npm.
 
 Read the [development guide](./docs/DEVELOPMENT.md) for the architecture, repository layout, source-build installation, and verification boundaries.
 
-```powershell
+```sh
 npm ci
 npm run check
-npm run package
 ```
+
+Release packaging currently runs on Windows through `npm run package`; runtime and installer checks run on Windows, macOS, and Linux in CI.
 
 Keep changes focused. Add or update tests when changing lyric selectors, text handling, the reading engine, or generated DOM behavior.
 

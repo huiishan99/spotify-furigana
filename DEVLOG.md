@@ -1,5 +1,13 @@
 # Devlog
 
+## 2026-08-18 — v0.4.0 macOS support
+
+- 新增可恢复的 macOS Release 安装与卸载脚本：识别 `/Applications` 和 `~/Applications` 中的 Spotify，配置官方 Resources/prefs 路径，把应用安装到 Spicetify CustomApps，并在失败时恢复旧版本。
+- 安装器会在 `~/Applications` 创建带项目「ふ」图标的 **Furigana for Spotify.app**；该入口通过 `spicetify auto` 启动 Spotify，使受支持的客户端更新后可以自动重新应用修改。
+- Release ZIP 同时包含 Windows PowerShell 与 macOS shell 安装器，生产构建增加 macOS 启动器图像；安装、升级、卸载、启动器、shell 语法和平台路径均有契约测试。
+- CI 扩展到 Windows、macOS 与 Linux；三语 README、离线安装说明、兼容性边界、问题模板及发布文案同步更新。macOS 暂仅声明自动化覆盖，等待真实 Spotify 客户端验证报告后再加入实机兼容表。
+- 版本提升至 `0.4.0`。
+
 ## 2026-08-17 — v0.3.0 synchronized accurate readings
 
 - 新增默认关闭的“在线精准读音（实验性）”：用户主动开启后，只发送公开曲名与歌手进行搜索，并在本机用 Spotify 专辑名辅助筛选网易云曲目；弱匹配、无结果、超时和错误都会自动回退本地词典。

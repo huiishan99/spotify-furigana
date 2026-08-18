@@ -15,11 +15,22 @@ body:
       placeholder: v0.1.0
     validations:
       required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating system
+      options:
+        - Windows 11
+        - Windows 10
+        - macOS
+        - Other or unsupported
+    validations:
+      required: true
   - type: input
     id: spotify-version
     attributes:
       label: Spotify version and installation source
-      placeholder: 1.2.x, Microsoft Store or direct download
+      placeholder: 1.2.x, Microsoft Store or spotify.com download
     validations:
       required: true
   - type: input

@@ -1,6 +1,6 @@
 {
   "name": "Furigana for Spotify",
-  "description": "Show customizable Japanese lyric readings with local analysis and optional synchronized pronunciation matching on Spotify for Windows.",
+  "description": "Show customizable Japanese lyric readings with local analysis and optional synchronized pronunciation matching on Spotify for Windows and macOS.",
   "preview": "assets/marketing/demo.gif",
   "readme": "README.md",
   "authors": [

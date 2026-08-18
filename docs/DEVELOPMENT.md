@@ -6,7 +6,7 @@ This document contains the implementation and build details intentionally kept o
 
 - Node.js 22 or later
 - npm
-- Windows and Spicetify for real-client verification
+- Windows or macOS and Spicetify for real-client verification
 
 ## Architecture
 
@@ -60,6 +60,7 @@ npm run package
 - `npm run check` runs TypeScript checks, app syntax validation, Vitest, and the production build.
 - `npm run marketing-assets` deterministically rebuilds launch artwork from the project logo and real screenshot.
 - `npm run package` creates the installable ZIP and SHA-256 checksum under the ignored `release/` directory.
+- `packaging/install.ps1` and `packaging/uninstall.ps1` implement the Windows lifecycle; `packaging/install.sh` and `packaging/uninstall.sh` implement the macOS lifecycle and create a branded app launcher under `~/Applications`.
 
 ## Install a source build
 
@@ -75,3 +76,16 @@ spicetify apply
 ```
 
 Restart Spotify and verify the standard lyrics view, the playbar toggle, all three reading modes, and each appearance control. Record real-client results in `docs/COMPATIBILITY.md`; do not describe automated selector coverage as real-client verification.
+
+On macOS, use the equivalent source install:
+
+```sh
+npm run build
+target="${XDG_CONFIG_HOME:-$HOME/.config}/spicetify/CustomApps/spotify-furigana"
+mkdir -p "$target"
+cp -R dist/spotify-furigana/. "$target/"
+spicetify config spotify_path "/Applications/Spotify.app/Contents/Resources" \
+  prefs_path "$HOME/Library/Application Support/Spotify/prefs" \
+  custom_apps spotify-furigana
+spicetify apply
+```

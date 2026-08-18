@@ -56,6 +56,8 @@ foreach ($requiredPath in @(
   (Join-Path $builtApp "extension.js"),
   (Join-Path $packagingRoot "install.ps1"),
   (Join-Path $packagingRoot "uninstall.ps1"),
+  (Join-Path $packagingRoot "install.sh"),
+  (Join-Path $packagingRoot "uninstall.sh"),
   (Join-Path $packagingRoot "INSTALL.md"),
   (Join-Path $packagingRoot "THIRD_PARTY_NOTICES.md"),
   (Join-Path $projectRoot "LICENSE")
@@ -85,6 +87,8 @@ New-Item -ItemType Directory -Path $stageRoot -Force | Out-Null
 Copy-Item -LiteralPath $builtApp -Destination (Join-Path $stageRoot "spotify-furigana") -Recurse
 Copy-Item -LiteralPath (Join-Path $packagingRoot "install.ps1") -Destination $stageRoot
 Copy-Item -LiteralPath (Join-Path $packagingRoot "uninstall.ps1") -Destination $stageRoot
+Copy-Item -LiteralPath (Join-Path $packagingRoot "install.sh") -Destination $stageRoot
+Copy-Item -LiteralPath (Join-Path $packagingRoot "uninstall.sh") -Destination $stageRoot
 Copy-Item -LiteralPath (Join-Path $packagingRoot "INSTALL.md") -Destination $stageRoot
 Copy-Item -LiteralPath (Join-Path $packagingRoot "THIRD_PARTY_NOTICES.md") -Destination $stageRoot
 Copy-Item -LiteralPath (Join-Path $projectRoot "LICENSE") -Destination $stageRoot

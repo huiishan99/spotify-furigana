@@ -9,7 +9,7 @@
 <h1 align="center">Furigana for Spotify</h1>
 
 <p align="center">
-  <strong>Show hiragana, katakana, or romaji readings above Japanese kanji in Spotify lyrics on Windows.</strong>
+  <strong>Show hiragana, katakana, or romaji readings above Japanese kanji in Spotify lyrics on Windows and macOS.</strong>
   <br />
   Local by default · Optional synchronized readings · No Spotify credentials required
 </p>
@@ -18,7 +18,7 @@
   <a href="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml/badge.svg" /></a>
   <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/huiishan99/spotify-furigana?display_name=tag&amp;label=release&amp;color=00A77D" /></a>
   <a href="https://github.com/huiishan99/spotify-furigana/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/huiishan99/spotify-furigana?style=flat&amp;logo=github&amp;color=00A77D" /></a>
-  <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-4F46E5" />
+  <img alt="Windows and macOS" src="https://img.shields.io/badge/Desktop-Windows%20%7C%20macOS-4F46E5" />
   <img alt="Spotify Desktop 1.2.96 tested" src="https://img.shields.io/badge/Spotify%20Desktop-1.2.96%20tested-16A34A?logo=spotify&amp;logoColor=1ED760&amp;labelColor=191414" />
   <img alt="Spicetify 2.44 tested" src="https://img.shields.io/badge/Spicetify-2.44%20tested-F97366" />
   <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-4338CA" /></a>
@@ -58,8 +58,8 @@ The extension enhances lyrics already displayed by Spotify and uses standard HTM
 
 ## Requirements
 
-- Windows 10 or Windows 11
-- Spotify for Windows: the [spotify.com desktop build](https://www.spotify.com/download/windows/) or Microsoft Store build (install only one)
+- Windows 10/11, or macOS 12 or later
+- Spotify Desktop: on Windows, use the [spotify.com build](https://www.spotify.com/download/windows/) or Microsoft Store build (install only one); on macOS, use the [spotify.com build](https://www.spotify.com/download/mac/)
 - [Spicetify](https://spicetify.app/docs/getting-started)
 
 Verified on real hardware with:
@@ -72,6 +72,8 @@ Verified on real hardware with:
 
 Other versions may work, but have not been individually verified.
 
+The macOS installer and production bundle are covered by automated checks on macOS runners. A real Spotify client compatibility report has not yet been recorded, so macOS support should be considered newly available rather than real-client verified.
+
 See the [compatibility matrix](./docs/COMPATIBILITY.md) for more version information.
 
 ## Install
@@ -80,9 +82,11 @@ See the [compatibility matrix](./docs/COMPATIBILITY.md) for more version informa
   <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="Download the latest release" src="https://img.shields.io/badge/Download-latest%20release-00A77D?style=for-the-badge&amp;logo=github" /></a>
 </p>
 
-1. Download `spotify-furigana-vX.Y.Z.zip` from the [latest release](https://github.com/huiishan99/spotify-furigana/releases/latest).
-2. Extract the ZIP completely.
-3. Open PowerShell in the extracted folder and run:
+Download `spotify-furigana-vX.Y.Z.zip` from the [latest release](https://github.com/huiishan99/spotify-furigana/releases/latest), then extract it completely.
+
+### Windows
+
+Open PowerShell in the extracted folder and run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install.ps1
@@ -95,12 +99,28 @@ After installation, open **Furigana for Spotify** from the Start menu. This laun
 > [!IMPORTANT]
 > Microsoft Store users must launch **Furigana for Spotify** instead of Spotify's regular shortcut. The generated launcher runs `spicetify auto` with the required app directory; opening the Store app directly will show the unmodified Spotify UI. Spicetify 2.44 officially lists support through Spotify 1.2.93; the Store 1.2.96 setup above is real-client tested by this project but remains outside Spicetify's official range.
 
+### macOS
+
+Open Terminal in the extracted folder and run:
+
+```sh
+sh ./install.sh
+```
+
+The installer supports Spotify in `/Applications` or `~/Applications`, validates Spotify's preferences, backs up an existing Furigana installation, configures and applies Spicetify, and creates **Furigana for Spotify.app** in `~/Applications` with the project's **ふ** icon. Open this launcher for future starts so `spicetify auto` can repair supported Spotify updates before launching Spotify.
+
 ## Update
 
 Download and extract the newest Release ZIP, then run its installer again:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+On macOS:
+
+```sh
+sh ./install.sh
 ```
 
 The installer preserves the previous installation as a timestamped backup before updating it.
@@ -130,20 +150,28 @@ The extension does not send Spotify credentials, cookies, account data, or the l
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
+On macOS:
+
+```sh
+sh ./uninstall.sh
+```
+
 ## Troubleshooting
 
 - **No Furigana page in the sidebar:** run `spicetify apply`, then restart Spotify.
 - **The button appears but lyrics are unchanged:** make sure the song has Japanese lyrics containing kanji, enable the lyrics button, and wait briefly for the first local dictionary load.
 - **Online accurate readings stay on the local fallback:** the provider may not have synchronized romanization, the album/version may not match safely, or the service may be temporarily unavailable. The extension deliberately refuses weak matches.
-- **The app disappeared after a Spotify update:** close Spotify and open **Furigana for Spotify** from the Start menu. If needed, run `spicetify backup apply` once.
+- **The app disappeared after a Spotify update:** close Spotify and open **Furigana for Spotify** from the Windows Start menu or `~/Applications` on macOS. If needed, run `spicetify backup apply` once.
 - **The installer detects two Spotify installations:** keep either the Microsoft Store build or the [spotify.com build](https://www.spotify.com/download/windows/), remove the other, open the retained app for at least 60 seconds, then run the installer again.
 - **Microsoft Store Spotify opens without Furigana:** close it and use **Furigana for Spotify** from the Start menu; do not use the regular Store shortcut.
+- **macOS says Spotify or its preferences are missing:** install Spotify in `/Applications` or `~/Applications`, open it, sign in for at least 60 seconds, close it, and rerun `sh ./install.sh`.
+- **The macOS launcher cannot find Spicetify:** reinstall Spicetify, open a new Terminal window, and rerun the Furigana installer so the launcher is rebuilt.
 
 ## Known limitations
 
 - Local mode can misread names, place names, wordplay, and intentionally unusual pronunciations. Online accurate readings improve supported songs but cannot cover every track or line.
 - Spotify updates can change the lyrics DOM. If the extension stops working, include your Spotify and Spicetify versions in the issue.
-- The project currently targets Spotify desktop for Windows only. Web Player, macOS, and mobile are not supported.
+- Web Player and mobile are not supported. macOS has automated installer/build coverage but is awaiting a published real-client verification report.
 
 ## Contributing
 

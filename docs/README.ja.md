@@ -9,7 +9,7 @@
 <h1 align="center">Furigana for Spotify</h1>
 
 <p align="center">
-  <strong>Windows版Spotifyの歌詞に、ひらがな・カタカナ・ローマ字の読みをリアルタイム表示。</strong>
+  <strong>Windows・macOS版Spotifyの歌詞に、ひらがな・カタカナ・ローマ字の読みをリアルタイム表示。</strong>
   <br />
   デフォルトはローカル処理 · 同期読みを任意で使用 · Spotify認証情報は不要
 </p>
@@ -18,7 +18,7 @@
   <a href="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml/badge.svg" /></a>
   <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="最新リリース" src="https://img.shields.io/github/v/release/huiishan99/spotify-furigana?display_name=tag&amp;label=release&amp;color=00A77D" /></a>
   <a href="https://github.com/huiishan99/spotify-furigana/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/huiishan99/spotify-furigana?style=flat&amp;logo=github&amp;color=00A77D" /></a>
-  <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-4F46E5" />
+  <img alt="Windows and macOS" src="https://img.shields.io/badge/Desktop-Windows%20%7C%20macOS-4F46E5" />
   <img alt="Spotify Desktop 1.2.96 tested" src="https://img.shields.io/badge/Spotify%20Desktop-1.2.96%20tested-16A34A?logo=spotify&amp;logoColor=1ED760&amp;labelColor=191414" />
   <img alt="Spicetify 2.44 tested" src="https://img.shields.io/badge/Spicetify-2.44%20tested-F97366" />
   <a href="../LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-4338CA" /></a>
@@ -58,8 +58,8 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
 
 ## 必要環境
 
-- Windows 10 または Windows 11
-- Windows版Spotify：[spotify.com版](https://www.spotify.com/download/windows/)またはMicrosoft Store版（どちらか一方だけをインストール）
+- Windows 10/11、または macOS 12以降
+- Spotifyデスクトップ版：Windowsでは[spotify.com版](https://www.spotify.com/download/windows/)またはMicrosoft Store版（どちらか一方）、macOSでは[spotify.com版](https://www.spotify.com/download/mac/)
 - [Spicetify](https://spicetify.app/docs/getting-started)
 
 実機で確認済みの構成：
@@ -72,6 +72,8 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
 
 ほかのバージョンでも動作する可能性はありますが、個別の検証はまだ行っていません。
 
+macOSインストーラーと本番ビルドはmacOS CIで自動検証していますが、実際のSpotifyクライアントでの確認報告はまだ登録されていません。そのため、macOSは新規対応であり、実機検証済みとはしていません。
+
 詳しいバージョン情報は[互換性マトリクス](./COMPATIBILITY.md)を参照してください。
 
 ## インストール
@@ -80,9 +82,11 @@ Spotifyがすでに表示している歌詞を拡張し、漢字に標準HTMLの
   <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="最新リリースをダウンロード" src="https://img.shields.io/badge/Download-最新リリース-00A77D?style=for-the-badge&amp;logo=github" /></a>
 </p>
 
-1. [最新のRelease](https://github.com/huiishan99/spotify-furigana/releases/latest)から `spotify-furigana-vX.Y.Z.zip` をダウンロードします。
-2. ZIPを完全に展開します。
-3. 展開したフォルダーでPowerShellを開き、次を実行します。
+[最新のRelease](https://github.com/huiishan99/spotify-furigana/releases/latest)から `spotify-furigana-vX.Y.Z.zip` をダウンロードし、完全に展開します。
+
+### Windows
+
+展開したフォルダーでPowerShellを開き、次を実行します。
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install.ps1
@@ -95,12 +99,28 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 > [!IMPORTANT]
 > Microsoft Storeユーザーは、通常のSpotifyショートカットではなく **Furigana for Spotify** を使用してください。生成されたランチャーは `spicetify auto` で必要なアプリディレクトリを指定します。Storeアプリを直接開くと未変更のSpotify UIになります。Spicetify 2.44の公式対応範囲はSpotify 1.2.93までです。上記のStore 1.2.96構成は本プロジェクトで実機確認済みですが、Spicetifyの公式範囲外です。
 
+### macOS
+
+展開したフォルダーでターミナルを開き、次を実行します。
+
+```sh
+sh ./install.sh
+```
+
+インストーラーは `/Applications` または `~/Applications` のSpotifyに対応し、設定ファイルを確認して既存版をバックアップし、Spicetifyを設定・適用します。さらに、プロジェクト独自の **「ふ」アイコン**を使った **Furigana for Spotify.app** を `~/Applications` に作成します。今後はこのランチャーを使うと、Spotify起動前に `spicetify auto` が実行され、対応済みのSpotify更新後に自動復旧できます。
+
 ## 更新
 
 最新のRelease ZIPをダウンロードして展開し、インストーラーをもう一度実行します。
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+macOS：
+
+```sh
+sh ./install.sh
 ```
 
 更新前に、以前のインストールはタイムスタンプ付きのバックアップとして保存されます。
@@ -130,20 +150,28 @@ Spotifyの認証情報、Cookie、アカウント情報、Spotify画面に表示
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
+macOS：
+
+```sh
+sh ./uninstall.sh
+```
+
 ## トラブルシューティング
 
 - **サイドバーにFuriganaページがない：**`spicetify apply` を実行し、Spotifyを再起動してください。
 - **ボタンはあるが歌詞が変わらない：**漢字を含む日本語歌詞がある曲か、歌詞ボタンがオンかを確認し、初回のローカル辞書読み込みを少し待ってください。
 - **オンライン高精度読みがローカル辞書のまま：**同期ローマ字がない、アルバムや曲バージョンを安全に照合できない、またはサービスが一時的に利用できない可能性があります。不確かな一致は意図的に使用しません。
-- **Spotify更新後にアプリが消えた：**Spotifyを閉じ、スタートメニューから **Furigana for Spotify** を開いてください。必要なら `spicetify backup apply` を一度実行します。
+- **Spotify更新後にアプリが消えた：**Spotifyを閉じ、WindowsのスタートメニューまたはmacOSの `~/Applications` から **Furigana for Spotify** を開いてください。必要なら `spicetify backup apply` を一度実行します。
 - **インストーラーがSpotifyを二つ検出した：**Microsoft Store版または[spotify.com版](https://www.spotify.com/download/windows/)のどちらか一方を残して他方を削除し、残した版を60秒以上開いてから再実行してください。
 - **Microsoft Store版を開いてもFuriganaがない：**閉じて、スタートメニューの **Furigana for Spotify** を使用してください。通常のStoreショートカットは使用しません。
+- **macOSでSpotifyまたは設定ファイルが見つからない：**Spotifyを `/Applications` または `~/Applications` にインストールし、60秒以上ログインしてから閉じ、`sh ./install.sh` を再実行してください。
+- **macOSランチャーがSpicetifyを見つけられない：**Spicetifyを再インストールし、新しいターミナルを開いてからFuriganaインストーラーを再実行し、ランチャーを作り直してください。
 
 ## 既知の制限
 
 - ローカルモードでは、人名、地名、言葉遊び、特殊な読み方を誤る場合があります。オンライン高精度読みは対応曲を改善しますが、すべての曲や行を保証するものではありません。
 - Spotifyの更新によって歌詞DOMが変わる可能性があります。突然動作しなくなった場合は、SpotifyとSpicetifyのバージョンをissueに記載してください。
-- 現在はWindows版Spotifyデスクトップアプリのみを対象としており、Web Player、macOS、モバイル版には対応していません。
+- Web Playerとモバイル版には対応していません。macOSはインストール・ビルドの自動検証済みですが、公開できる実機検証報告を待っている段階です。
 
 ## コントリビューション
 

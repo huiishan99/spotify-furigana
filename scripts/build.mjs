@@ -39,6 +39,10 @@ await Promise.all([
     resolve(projectRoot, "assets", "launcher.ico"),
     resolve(outputRoot, "launcher.ico"),
   ),
+  copyFile(
+    resolve(projectRoot, "assets", "launcher.icns"),
+    resolve(outputRoot, "launcher.icns"),
+  ),
   cp(
     resolve(projectRoot, "node_modules", "kuromoji", "dict"),
     resolve(outputRoot, "dict"),

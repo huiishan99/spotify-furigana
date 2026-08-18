@@ -9,7 +9,7 @@
 <h1 align="center">Furigana for Spotify</h1>
 
 <p align="center">
-  <strong>在 Windows Spotify 桌面歌词上，为日语汉字实时显示平假名、片假名或罗马字读音。</strong>
+  <strong>在 Windows 与 macOS Spotify 桌面歌词上，为日语汉字实时显示平假名、片假名或罗马字读音。</strong>
   <br />
   默认本地处理 · 可选同步读音 · 无需 Spotify 凭据
 </p>
@@ -18,7 +18,7 @@
   <a href="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/huiishan99/spotify-furigana/actions/workflows/ci.yml/badge.svg" /></a>
   <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="最新版本" src="https://img.shields.io/github/v/release/huiishan99/spotify-furigana?display_name=tag&amp;label=release&amp;color=00A77D" /></a>
   <a href="https://github.com/huiishan99/spotify-furigana/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/huiishan99/spotify-furigana?style=flat&amp;logo=github&amp;color=00A77D" /></a>
-  <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-4F46E5" />
+  <img alt="Windows and macOS" src="https://img.shields.io/badge/Desktop-Windows%20%7C%20macOS-4F46E5" />
   <img alt="Spotify Desktop 1.2.96 tested" src="https://img.shields.io/badge/Spotify%20Desktop-1.2.96%20tested-16A34A?logo=spotify&amp;logoColor=1ED760&amp;labelColor=191414" />
   <img alt="Spicetify 2.44 tested" src="https://img.shields.io/badge/Spicetify-2.44%20tested-F97366" />
   <a href="../LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-4338CA" /></a>
@@ -58,8 +58,8 @@
 
 ## 环境要求
 
-- Windows 10 或 Windows 11
-- Windows Spotify：[spotify.com 桌面版](https://www.spotify.com/download/windows/)或 Microsoft Store 版（二选一，不要同时安装）
+- Windows 10/11，或 macOS 12 及更高版本
+- Spotify 桌面版：Windows 使用 [spotify.com 桌面版](https://www.spotify.com/download/windows/)或 Microsoft Store 版（二选一）；macOS 使用 [spotify.com 版](https://www.spotify.com/download/mac/)
 - [Spicetify](https://spicetify.app/docs/getting-started)
 
 当前已实机验证：
@@ -72,6 +72,8 @@
 
 其他版本可能也能工作，但尚未逐一验证。
 
+macOS 安装器和生产构建已纳入 macOS CI 自动检查，但目前还没有登记真实 Spotify 客户端的验证报告。因此 macOS 属于新增支持，尚不能表述为已完成实机验证。
+
 更多版本信息请查看[兼容性矩阵](./COMPATIBILITY.md)。
 
 ## 安装
@@ -80,9 +82,11 @@
   <a href="https://github.com/huiishan99/spotify-furigana/releases/latest"><img alt="下载最新版本" src="https://img.shields.io/badge/下载-最新版本-00A77D?style=for-the-badge&amp;logo=github" /></a>
 </p>
 
-1. 从[最新 Release](https://github.com/huiishan99/spotify-furigana/releases/latest)下载 `spotify-furigana-vX.Y.Z.zip`。
-2. 完整解压 ZIP。
-3. 在解压目录中打开 PowerShell，运行：
+从[最新 Release](https://github.com/huiishan99/spotify-furigana/releases/latest)下载 `spotify-furigana-vX.Y.Z.zip`，并完整解压。
+
+### Windows
+
+在解压目录中打开 PowerShell，运行：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install.ps1
@@ -95,12 +99,28 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 > [!IMPORTANT]
 > Microsoft Store 用户必须使用 **Furigana for Spotify**，不能使用 Spotify 原来的普通快捷方式。安装器生成的入口会通过 `spicetify auto` 带上所需的应用目录；直接打开 Store 应用只会显示未修改的 Spotify。Spicetify 2.44 官方兼容范围只到 Spotify 1.2.93；上表的 Store 1.2.96 已由本项目实机验证，但仍超出 Spicetify 官方范围。
 
+### macOS
+
+在解压目录中打开终端，运行：
+
+```sh
+sh ./install.sh
+```
+
+安装器支持位于 `/Applications` 或 `~/Applications` 的 Spotify，会检查偏好设置、备份旧版、配置并应用 Spicetify，再在 `~/Applications` 创建带项目 **「ふ」图标**的 **Furigana for Spotify.app**。以后请用这个入口启动，它会先运行 `spicetify auto`，在受支持的 Spotify 更新后自动修复再打开 Spotify。
+
 ## 更新
 
 下载并解压最新版 Release ZIP，然后再次运行其中的安装器：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+macOS：
+
+```sh
+sh ./install.sh
 ```
 
 更新前，安装器会把旧版本保留为带时间戳的备份。
@@ -130,20 +150,28 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```
 
+macOS：
+
+```sh
+sh ./uninstall.sh
+```
+
 ## 常见问题
 
 - **左侧栏没有 Furigana 页面：**运行 `spicetify apply`，然后重新启动 Spotify。
 - **按钮出现但歌词没有变化：**确认歌曲有包含汉字的日语歌词、歌词按钮处于开启状态，并等待首次本地词典加载。
 - **在线精准读音仍显示“使用本地词典”：**可能是歌词源没有同步罗马音、专辑或歌曲版本无法安全匹配，或者服务暂时不可用。插件会主动拒绝把不可靠结果套到当前歌曲。
-- **Spotify 更新后插件消失：**关闭 Spotify，然后从开始菜单打开 **Furigana for Spotify**；必要时手动运行一次 `spicetify backup apply`。
+- **Spotify 更新后插件消失：**关闭 Spotify，然后从 Windows 开始菜单或 macOS 的 `~/Applications` 打开 **Furigana for Spotify**；必要时手动运行一次 `spicetify backup apply`。
 - **安装器检测到两个 Spotify：**保留 Microsoft Store 版或 [spotify.com 桌面版](https://www.spotify.com/download/windows/)中的一个，卸载另一个，打开保留版本至少 60 秒，再重新运行安装器。
 - **Microsoft Store 版打开后没有 Furigana：**关闭它，从开始菜单使用 **Furigana for Spotify**；不要使用原来的 Store 快捷方式。
+- **macOS 提示找不到 Spotify 或偏好设置：**将 Spotify 安装到 `/Applications` 或 `~/Applications`，打开并登录至少 60 秒，关闭后重新运行 `sh ./install.sh`。
+- **macOS 启动器找不到 Spicetify：**重新安装 Spicetify，打开新的终端窗口，再运行一次 Furigana 安装器以重建启动器。
 
 ## 已知限制
 
 - 本地模式仍可能读错人名、地名、双关及特殊唱法；在线精准读音能改善已覆盖歌曲，但无法覆盖所有曲目和歌词行。
 - Spotify 更新可能改变歌词 DOM；若插件突然失效，请在 issue 中附上 Spotify 与 Spicetify 版本。
-- 当前只面向 Windows Spotify 桌面客户端，不支持 Web Player、macOS 或移动端。
+- 不支持 Web Player 与移动端。macOS 已有自动化安装/构建覆盖，但仍等待公开的实机验证报告。
 
 ## 参与贡献
 

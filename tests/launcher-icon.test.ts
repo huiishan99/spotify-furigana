@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
-describe("Windows launcher icon", () => {
+describe("desktop launcher icons", () => {
   it("contains the expected multi-size PNG icon entries", async () => {
     const icon = await readFile(resolve(projectRoot, "assets", "launcher.ico"));
     const imageCount = icon.readUInt16LE(4);
@@ -32,5 +32,39 @@ describe("Windows launcher icon", () => {
     }
 
     expect(sizes).toEqual([16, 24, 32, 48, 64, 128, 256]);
+  });
+
+  it("contains the expected macOS PNG icon entries", async () => {
+    const icon = await readFile(
+      resolve(projectRoot, "assets", "launcher.icns"),
+    );
+    const expectedTypes = [
+      "icp4",
+      "icp5",
+      "icp6",
+      "ic07",
+      "ic08",
+      "ic09",
+      "ic10",
+    ];
+    const types = [];
+    let offset = 8;
+
+    expect(icon.subarray(0, 4).toString("ascii")).toBe("icns");
+    expect(icon.readUInt32BE(4)).toBe(icon.length);
+
+    while (offset < icon.length) {
+      const type = icon.subarray(offset, offset + 4).toString("ascii");
+      const length = icon.readUInt32BE(offset + 4);
+      types.push(type);
+      expect(length).toBeGreaterThan(8);
+      expect(icon.subarray(offset + 8, offset + 16)).toEqual(
+        Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      );
+      offset += length;
+    }
+
+    expect(offset).toBe(icon.length);
+    expect(types).toEqual(expectedTypes);
   });
 });

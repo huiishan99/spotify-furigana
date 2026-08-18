@@ -156,7 +156,7 @@ function SpotifyFuriganaApp() {
     react.createElement(
       "p",
       { className: "spotify-furigana-app__lead" },
-      "在 Windows Spotify 桌面端的日语歌词汉字上方显示平假名、片假名或罗马字。默认本地分析，也可主动开启同步读音匹配。",
+      "在 Windows 与 macOS Spotify 桌面端的日语歌词汉字上方显示平假名、片假名或罗马字。默认本地分析，也可主动开启同步读音匹配。",
     ),
     react.createElement(
       "div",
