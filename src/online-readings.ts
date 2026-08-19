@@ -8,10 +8,12 @@ export const ONLINE_CACHE_CLEAR_EVENT = "spotify-furigana:online-cache-clear";
 
 const SEARCH_ENDPOINT = "https://music-api.gdstudio.xyz/api.php";
 const NETEASE_LYRIC_ENDPOINT = "https://music.163.com/api/song/lyric";
+const MUSICBRAINZ_ARTIST_ENDPOINT = "https://musicbrainz.org/ws/2/artist/";
 const POSITIVE_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const NEGATIVE_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const MAX_CACHE_ENTRIES = 30;
 const MAX_TIMESTAMP_DIFFERENCE_MS = 120;
+const MAX_LYRIC_CANDIDATE_ATTEMPTS = 4;
 
 export interface OnlineTrackMetadata {
   uri: string;
@@ -43,7 +45,10 @@ export interface OnlineReadingStatus {
   message: string;
 }
 
-export type JsonRequest = (url: string) => Promise<unknown>;
+export type JsonRequest = (
+  url: string,
+  headers?: Record<string, string>,
+) => Promise<unknown>;
 
 interface TimestampedLine {
   startTimeMs: number;
@@ -58,6 +63,13 @@ interface SearchCandidate {
   album?: string;
 }
 
+interface MusicBrainzArtist {
+  name?: string;
+  "sort-name"?: string;
+  score?: number;
+  aliases?: unknown;
+}
+
 interface CacheEntry {
   storedAt: number;
   expiresAt: number;
@@ -68,6 +80,8 @@ interface CacheDocument {
   version: 1;
   entries: Record<string, CacheEntry>;
 }
+
+const artistAliasCache = new Map<string, string[]>();
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -202,14 +216,91 @@ function getArtistNames(value: unknown): string[] {
   return value.filter((artist): artist is string => typeof artist === "string");
 }
 
-export function selectBestSearchCandidate(
+function getMusicBrainzNames(artist: MusicBrainzArtist): string[] {
+  const names: string[] = [];
+  if (typeof artist.name === "string") {
+    names.push(artist.name);
+  }
+  if (typeof artist["sort-name"] === "string") {
+    names.push(artist["sort-name"]);
+  }
+  if (Array.isArray(artist.aliases)) {
+    for (const alias of artist.aliases) {
+      if (isRecord(alias) && typeof alias.name === "string") {
+        names.push(alias.name);
+      }
+    }
+  }
+  return names;
+}
+
+export function getVerifiedArtistAliases(
+  response: unknown,
+  expectedArtist: string,
+): string[] {
+  if (!isRecord(response) || !Array.isArray(response.artists)) {
+    return [];
+  }
+
+  const expected = normalizeComparable(expectedArtist);
+  for (const candidate of response.artists as MusicBrainzArtist[]) {
+    if (!isRecord(candidate)) {
+      continue;
+    }
+    const score = Number(candidate.score);
+    if (!Number.isFinite(score) || score < 95) {
+      continue;
+    }
+
+    const names = getMusicBrainzNames(candidate);
+    if (!names.some((name) => normalizeComparable(name) === expected)) {
+      continue;
+    }
+
+    return Array.from(
+      new Set(names.map((name) => name.trim()).filter(Boolean)),
+    );
+  }
+
+  return [];
+}
+
+async function fetchVerifiedArtistAliases(
+  artist: string,
+  request: JsonRequest,
+): Promise<string[]> {
+  const key = normalizeComparable(artist);
+  const cached = artistAliasCache.get(key);
+  if (cached) {
+    return cached;
+  }
+
+  const url =
+    `${MUSICBRAINZ_ARTIST_ENDPOINT}?query=${encodeURIComponent(artist)}` +
+    "&fmt=json&limit=5";
+  const response = await request(url, {
+    "User-Agent":
+      "FuriganaForSpotify/0.4.2 (https://github.com/huiishan99/spotify-furigana)",
+  });
+  const aliases = getVerifiedArtistAliases(response, artist);
+  if (aliases.length > 0) {
+    artistAliasCache.set(key, aliases);
+  }
+  return aliases;
+}
+
+function selectSearchCandidates(
   candidates: SearchCandidate[],
   track: OnlineTrackMetadata,
-): SearchCandidate | null {
+  artistAliases: string[] = [],
+): SearchCandidate[] {
   const expectedTitle = normalizeTitle(track.title);
-  const expectedArtist = normalizeComparable(track.artist);
+  const expectedArtists = new Set(
+    [track.artist, ...artistAliases].map(normalizeComparable).filter(Boolean),
+  );
   const expectedAlbum = normalizeComparable(track.album);
-  let best: { candidate: SearchCandidate; score: number } | undefined;
+  const matches: Array<{ candidate: SearchCandidate; score: number }> = [];
+  const seenProviderIds = new Set<string>();
 
   for (const candidate of candidates) {
     if (typeof candidate.name !== "string") {
@@ -222,7 +313,7 @@ export function selectBestSearchCandidate(
     }
 
     const artists = getArtistNames(candidate.artist).map(normalizeComparable);
-    const artistMatches = artists.some((artist) => artist === expectedArtist);
+    const artistMatches = artists.some((artist) => expectedArtists.has(artist));
     if (!artistMatches) {
       continue;
     }
@@ -236,12 +327,25 @@ export function selectBestSearchCandidate(
       score += 20;
     }
 
-    if (!best || score > best.score) {
-      best = { candidate, score };
+    const providerTrackId = String(candidate.lyric_id ?? candidate.id ?? "");
+    if (!providerTrackId || seenProviderIds.has(providerTrackId)) {
+      continue;
     }
+    seenProviderIds.add(providerTrackId);
+    matches.push({ candidate, score });
   }
 
-  return best?.candidate ?? null;
+  return matches
+    .sort((left, right) => right.score - left.score)
+    .map(({ candidate }) => candidate);
+}
+
+export function selectBestSearchCandidate(
+  candidates: SearchCandidate[],
+  track: OnlineTrackMetadata,
+  artistAliases: string[] = [],
+): SearchCandidate | null {
+  return selectSearchCandidates(candidates, track, artistAliases)[0] ?? null;
 }
 
 export async function fetchOnlineReadingResult(
@@ -255,35 +359,59 @@ export async function fetchOnlineReadingResult(
     return null;
   }
 
-  const candidate = selectBestSearchCandidate(
+  let candidates = selectSearchCandidates(
     searchResponse as SearchCandidate[],
     track,
   );
-  const providerTrackId = String(candidate?.lyric_id ?? candidate?.id ?? "");
-  if (!providerTrackId || !/^\d+$/u.test(providerTrackId)) {
-    return null;
+  if (candidates.length === 0) {
+    try {
+      const aliases = await fetchVerifiedArtistAliases(track.artist, request);
+      candidates = selectSearchCandidates(
+        searchResponse as SearchCandidate[],
+        track,
+        aliases,
+      );
+    } catch (error: unknown) {
+      console.warn(
+        "[Furigana for Spotify] Artist alias verification was unavailable.",
+        error,
+      );
+    }
   }
 
-  const lyricUrl =
-    `${NETEASE_LYRIC_ENDPOINT}?os=pc&id=${encodeURIComponent(providerTrackId)}` +
-    "&lv=-1&kv=-1&tv=-1&rv=-1";
-  const lyricResponse = await request(lyricUrl);
-  const lyrics = getNestedString(lyricResponse, "lrc", "lyric");
-  const romanizedLyrics = getNestedString(lyricResponse, "romalrc", "lyric");
-  if (!lyrics || !romanizedLyrics) {
-    return null;
+  for (const candidate of candidates.slice(0, MAX_LYRIC_CANDIDATE_ATTEMPTS)) {
+    const providerTrackId = String(candidate.lyric_id ?? candidate.id ?? "");
+    if (!providerTrackId || !/^\d+$/u.test(providerTrackId)) {
+      continue;
+    }
+
+    const lyricUrl =
+      `${NETEASE_LYRIC_ENDPOINT}?os=pc&id=${encodeURIComponent(providerTrackId)}` +
+      "&lv=-1&kv=-1&tv=-1&rv=-1";
+    const lyricResponse = await request(lyricUrl);
+    const lyrics = getNestedString(lyricResponse, "lrc", "lyric");
+    const romanizedLyrics = getNestedString(
+      lyricResponse,
+      "romalrc",
+      "lyric",
+    );
+    if (!lyrics || !romanizedLyrics) {
+      continue;
+    }
+
+    const readings = buildOnlineReadingIndex(lyrics, romanizedLyrics);
+    if (Object.keys(readings).length === 0) {
+      continue;
+    }
+
+    return {
+      provider: "netease",
+      providerTrackId,
+      readings,
+    };
   }
 
-  const readings = buildOnlineReadingIndex(lyrics, romanizedLyrics);
-  if (Object.keys(readings).length === 0) {
-    return null;
-  }
-
-  return {
-    provider: "netease",
-    providerTrackId,
-    readings,
-  };
+  return null;
 }
 
 function createEmptyCache(): CacheDocument {

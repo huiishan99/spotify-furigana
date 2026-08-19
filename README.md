@@ -141,7 +141,7 @@ Changes are saved locally and apply immediately.
 
 ## Optional accurate readings and privacy
 
-Online accurate readings are **off by default**. When enabled, the extension sends the current public track title and artist to the GD Studio search endpoint, then requests the selected track's synchronized lyrics and romanization from NetEase Cloud Music. The Spotify album name is used only for local result ranking. It uses that pronunciation data only to annotate the matching Spotify lyric line.
+Online accurate readings are **off by default**. When enabled, the extension sends the current public track title and artist to the GD Studio search endpoint, then requests the selected track's synchronized lyrics and romanization from NetEase Cloud Music. If strict artist matching fails because the services use different scripts, it sends the public artist name to MusicBrainz and accepts only a high-confidence verified alias such as `Fujii Kaze` ↔ `藤井風`. The Spotify album name is used only for local result ranking. It uses that pronunciation data only to annotate the matching Spotify lyric line.
 
 The extension does not send Spotify credentials, cookies, account data, or the lyrics rendered by Spotify. “Synchronized” means timestamp-paired provider lyrics and romanization; the extension does not listen to or transcribe audio. Successful matches are cached locally for up to 30 days; unavailable matches are remembered for 6 hours to avoid repeated requests, with at most 30 tracks retained. The settings page can clear this cache at any time. Provider availability and song coverage are not guaranteed, so local reading rules and the dictionary remain the automatic fallback.
 

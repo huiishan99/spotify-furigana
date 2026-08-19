@@ -6,6 +6,7 @@ import {
   fetchOnlineReadingResult,
   findOnlineRomanization,
   getCachedOnlineReading,
+  getVerifiedArtistAliases,
   normalizeLyricLookupText,
   ONLINE_CACHE_KEY,
   parseTimestampedLyrics,
@@ -125,6 +126,47 @@ describe("online synchronized readings", () => {
     expect(candidate?.id).toBe("2");
   });
 
+  it("accepts a cross-script artist only through a high-confidence alias", () => {
+    const response = {
+      artists: [
+        {
+          name: "藤井風",
+          "sort-name": "Fujii, Kaze",
+          score: 100,
+          aliases: [{ name: "藤井風" }, { name: "Fujii Kaze" }],
+        },
+      ],
+    };
+    const aliases = getVerifiedArtistAliases(response, "Fujii Kaze");
+    const candidate = selectBestSearchCandidate(
+      [
+        {
+          id: "2135625944",
+          name: "満ちてゆく",
+          artist: ["藤井風"],
+          album: "満ちてゆく",
+        },
+        {
+          id: "cover",
+          name: "満ちてゆく",
+          artist: ["Cover Artist"],
+          album: "満ちてゆく",
+        },
+      ],
+      {
+        uri: "spotify:track:michiteyuku",
+        title: "満ちてゆく",
+        artist: "Fujii Kaze",
+        album: "満ちてゆく",
+      },
+      aliases,
+    );
+
+    expect(aliases).toContain("藤井風");
+    expect(candidate?.id).toBe("2135625944");
+    expect(getVerifiedArtistAliases(response, "Different Artist")).toEqual([]);
+  });
+
   it("fetches only after a strict match and builds a usable index", async () => {
     const request = vi.fn(async (url: string) => {
       if (url.includes("types=search")) {
@@ -150,6 +192,147 @@ describe("online synchronized readings", () => {
     expect(Object.keys(result?.readings ?? {})).toHaveLength(2);
     expect(request).toHaveBeenCalledTimes(2);
     expect(request.mock.calls[1]?.[0]).toContain("rv=-1");
+  });
+
+  it("tries another verified release when the album match has no romaji", async () => {
+    const request = vi.fn(async (url: string) => {
+      if (url.includes("types=search")) {
+        return [
+          {
+            id: "album-version",
+            lyric_id: "100",
+            name: "夜に駆ける",
+            artist: ["YOASOBI"],
+            album: "THE BOOK",
+          },
+          {
+            id: "single-version",
+            lyric_id: "200",
+            name: "夜に駆ける",
+            artist: ["YOASOBI"],
+            album: "夜に駆ける",
+          },
+          {
+            id: "cover-version",
+            lyric_id: "300",
+            name: "夜に駆ける",
+            artist: ["Cover Artist"],
+            album: "THE BOOK",
+          },
+        ];
+      }
+      if (url.includes("id=100")) {
+        return { lrc: { lyric: lyrics }, romalrc: { lyric: "" } };
+      }
+      return {
+        lrc: { lyric: lyrics },
+        romalrc: { lyric: romanizedLyrics },
+      };
+    });
+
+    const result = await fetchOnlineReadingResult(track, request);
+
+    expect(result?.providerTrackId).toBe("200");
+    expect(request).toHaveBeenCalledTimes(3);
+    expect(request.mock.calls[1]?.[0]).toContain("id=100");
+    expect(request.mock.calls[2]?.[0]).toContain("id=200");
+    expect(request.mock.calls.some(([url]) => url.includes("id=300"))).toBe(
+      false,
+    );
+  });
+
+  it("uses a verified artist alias before fetching synchronized lyrics", async () => {
+    const request = vi.fn(async (url: string) => {
+      if (url.includes("types=search")) {
+        return [
+          {
+            id: "2135625944",
+            lyric_id: "2135625944",
+            name: "満ちてゆく",
+            artist: ["藤井風"],
+            album: "満ちてゆく",
+          },
+        ];
+      }
+      if (url.includes("musicbrainz.org")) {
+        return {
+          artists: [
+            {
+              name: "藤井風",
+              "sort-name": "Fujii, Kaze",
+              score: 100,
+              aliases: [{ name: "Fujii Kaze" }],
+            },
+          ],
+        };
+      }
+      return {
+        lrc: { lyric: lyrics },
+        romalrc: { lyric: romanizedLyrics },
+      };
+    });
+
+    const result = await fetchOnlineReadingResult(
+      {
+        uri: "spotify:track:michiteyuku",
+        title: "満ちてゆく",
+        artist: "Fujii Kaze",
+        album: "満ちてゆく",
+      },
+      request,
+    );
+
+    expect(result?.providerTrackId).toBe("2135625944");
+    expect(request).toHaveBeenCalledTimes(3);
+    expect(request.mock.calls[1]?.[0]).toContain("musicbrainz.org");
+    expect(request.mock.calls[2]?.[0]).toContain("rv=-1");
+  });
+
+  it("retries artist verification after an empty transient response", async () => {
+    let aliasRequests = 0;
+    const request = vi.fn(async (url: string) => {
+      if (url.includes("types=search")) {
+        return [
+          {
+            id: "400",
+            lyric_id: "400",
+            name: "再試行",
+            artist: ["再試行歌手"],
+            album: "再試行",
+          },
+        ];
+      }
+      if (url.includes("musicbrainz.org")) {
+        aliasRequests += 1;
+        return aliasRequests === 1
+          ? { artists: [] }
+          : {
+              artists: [
+                {
+                  name: "再試行歌手",
+                  "sort-name": "Retry Artist",
+                  score: 100,
+                },
+              ],
+            };
+      }
+      return {
+        lrc: { lyric: lyrics },
+        romalrc: { lyric: romanizedLyrics },
+      };
+    });
+    const retryTrack = {
+      uri: "spotify:track:retry",
+      title: "再試行",
+      artist: "Retry Artist",
+      album: "再試行",
+    };
+
+    expect(await fetchOnlineReadingResult(retryTrack, request)).toBeNull();
+    expect((await fetchOnlineReadingResult(retryTrack, request))?.providerTrackId).toBe(
+      "400",
+    );
+    expect(aliasRequests).toBe(2);
   });
 
   it("caches successful and negative lookups with different expiry windows", () => {

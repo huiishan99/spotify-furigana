@@ -118,7 +118,10 @@ function getCurrentTrackMetadata(): OnlineTrackMetadata | null {
   };
 }
 
-async function requestOnlineJson(url: string): Promise<unknown> {
+async function requestOnlineJson(
+  url: string,
+  headers?: Record<string, string>,
+): Promise<unknown> {
   let timeoutId: number | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timeoutId = window.setTimeout(
@@ -129,7 +132,7 @@ async function requestOnlineJson(url: string): Promise<unknown> {
 
   try {
     return await Promise.race([
-      Spicetify.CosmosAsync.get(url),
+      Spicetify.CosmosAsync.get(url, null, headers),
       timeout,
     ]);
   } finally {

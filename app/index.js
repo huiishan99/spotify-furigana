@@ -202,7 +202,7 @@ function SpotifyFuriganaApp() {
         react.createElement(
           "p",
           { className: "spotify-furigana-app__privacy" },
-          "开启后会向 GD Studio 搜索接口发送公开的歌曲名和歌手，并从网易云音乐读取匹配歌曲的歌词与罗马音。这里的“同步”指歌词时间戳配对，不会分析音频；专辑名只在本机用于筛选，结果仅缓存在本机。",
+          "开启后会向 GD Studio 发送公开的歌曲名和歌手；文字不同而无法匹配时，会向 MusicBrainz 查询公开歌手别名，再从网易云音乐读取歌词与罗马音。“同步”指时间戳配对，不会分析音频；结果仅缓存在本机。",
         ),
       ),
       react.createElement(
