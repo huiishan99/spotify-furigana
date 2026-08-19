@@ -51,7 +51,8 @@ The extension enhances lyrics already displayed by Spotify and uses standard HTM
 
 - **Works with Spotify's lyrics view**: automatically processes the current desktop layout and known fullscreen lyrics layouts.
 - **Local by default**: Kuroshiro + Kuromoji perform tokenization and reading conversion on your machine without contacting a lyrics service.
-- **Optional accurate-reading mode**: use synchronized romanization when available to handle readings such as `二人` → `ふたり` and intentional lyric pronunciations.
+- **Reliable common counters offline**: locally corrects `一人` / `1人` → `ひとり` and `二人` / `2人` → `ふたり`, while preserving terms such as `一人称` and `二人三脚`.
+- **Optional accurate-reading mode**: use synchronized romanization when available for song-specific and intentionally unusual pronunciations.
 - **Choose how readings appear**: switch between hiragana, katakana, and romaji, then tune size, opacity, and vertical spacing.
 - **Keeps Spotify's lyrics view**: it enhances the text already visible in Spotify instead of replacing the player or its timing.
 - **Easy to toggle**: use the lyrics button in the player bar or the custom app page in the sidebar.
@@ -142,7 +143,7 @@ Changes are saved locally and apply immediately.
 
 Online accurate readings are **off by default**. When enabled, the extension sends the current public track title and artist to the GD Studio search endpoint, then requests the selected track's synchronized lyrics and romanization from NetEase Cloud Music. The Spotify album name is used only for local result ranking. It uses that pronunciation data only to annotate the matching Spotify lyric line.
 
-The extension does not send Spotify credentials, cookies, account data, or the lyrics rendered by Spotify. Successful matches are cached locally for up to 30 days; unavailable matches are remembered for 6 hours to avoid repeated requests, with at most 30 tracks retained. The settings page can clear this cache at any time. Provider availability and song coverage are not guaranteed, so the local dictionary remains the automatic fallback.
+The extension does not send Spotify credentials, cookies, account data, or the lyrics rendered by Spotify. “Synchronized” means timestamp-paired provider lyrics and romanization; the extension does not listen to or transcribe audio. Successful matches are cached locally for up to 30 days; unavailable matches are remembered for 6 hours to avoid repeated requests, with at most 30 tracks retained. The settings page can clear this cache at any time. Provider availability and song coverage are not guaranteed, so local reading rules and the dictionary remain the automatic fallback.
 
 ## Uninstall
 
@@ -169,7 +170,7 @@ sh ./uninstall.sh
 
 ## Known limitations
 
-- Local mode can misread names, place names, wordplay, and intentionally unusual pronunciations. Online accurate readings improve supported songs but cannot cover every track or line.
+- Local mode handles common one- and two-person counters, but can still misread names, place names, wordplay, and intentionally unusual pronunciations. Online accurate readings improve supported songs but cannot cover every track or line.
 - Spotify updates can change the lyrics DOM. If the extension stops working, include your Spotify and Spicetify versions in the issue.
 - Web Player and mobile are not supported. macOS has automated installer/build coverage but is awaiting a published real-client verification report.
 

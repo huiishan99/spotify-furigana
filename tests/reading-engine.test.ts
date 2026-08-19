@@ -36,4 +36,18 @@ describe("local reading engine", () => {
     expect(converted).toContain("<rt>ふたり</rt>");
     expect(converted).not.toContain("<rt>にん</rt>");
   });
+
+  it("corrects one- and two-person counters during local fallback", async () => {
+    const converted = await convertToFurigana(
+      "一人で歩く、二人だけの空、1人2人",
+      dictionaryPath,
+    );
+
+    expect(converted).toContain("<ruby>一人<rp>(</rp><rt>ひとり</rt>");
+    expect(converted).toContain("<ruby>二人<rp>(</rp><rt>ふたり</rt>");
+    expect(converted).toContain("<ruby>1人<rp>(</rp><rt>ひとり</rt>");
+    expect(converted).toContain("<ruby>2人<rp>(</rp><rt>ふたり</rt>");
+    expect(converted).not.toContain("<rt>いち</rt>");
+    expect(converted).not.toContain("<rt>にん</rt>");
+  });
 });

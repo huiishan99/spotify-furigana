@@ -42,6 +42,7 @@ Key entry points:
 - `src/extension.ts`: observes lyrics, coordinates settings, and updates lyric lines;
 - `src/lyrics.ts`: maintains current and legacy Spotify lyrics selectors;
 - `src/reading-engine.ts`: performs local reading conversion and safe DOM construction;
+- `src/local-readings.ts`: applies context-guarded local phrase readings before dictionary conversion;
 - `src/settings.ts`: validates and persists the display configuration;
 - `src/icon.ts`: provides the original 「ふ」 playbar mark;
 - `src/online-readings.ts`: strictly matches optional NetEase synchronized romanization, aligns it to Spotify lyric lines, and manages the bounded local cache;

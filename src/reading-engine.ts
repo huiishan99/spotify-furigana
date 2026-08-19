@@ -2,6 +2,7 @@ import Kuroshiro from "kuroshiro";
 import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
 import type { ReadingMode } from "./settings";
 import { convertSungReadingToFurigana } from "./online-readings";
+import { protectLocalReadings } from "./local-readings";
 
 let enginePromise: Promise<Kuroshiro> | undefined;
 let activeDictionaryPath: string | undefined;
@@ -44,10 +45,12 @@ export async function convertToFurigana(
   }
 
   const engine = await getEngine(dictionaryPath);
-  return engine.convert(value, {
+  const protectedReadings = protectLocalReadings(value, readingMode);
+  const converted = await engine.convert(protectedReadings.value, {
     mode: "furigana",
     to: readingMode,
   });
+  return protectedReadings.restore(converted);
 }
 
 export function createSafeFuriganaFragment(
