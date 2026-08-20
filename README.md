@@ -53,6 +53,7 @@ The extension enhances lyrics already displayed by Spotify and uses standard HTM
 - **Local by default**: Kuroshiro + Kuromoji perform tokenization and reading conversion on your machine without contacting a lyrics service.
 - **Reliable common counters offline**: locally corrects `一人` / `1人` → `ひとり` and `二人` / `2人` → `ふたり`, while preserving terms such as `一人称` and `二人三脚`.
 - **Optional accurate-reading mode**: use synchronized romanization when available for song-specific and intentionally unusual pronunciations.
+- **English, Chinese, and Japanese UI**: follow Spotify automatically or choose a language independently in the app.
 - **Choose how readings appear**: switch between hiragana, katakana, and romaji, then tune size, opacity, and vertical spacing.
 - **Keeps Spotify's lyrics view**: it enhances the text already visible in Spotify instead of replacing the player or its timing.
 - **Easy to toggle**: use the lyrics button in the player bar or the custom app page in the sidebar.
@@ -130,6 +131,7 @@ The installer preserves the previous installation as a timestamped backup before
 
 Open **Furigana for Spotify** from Spotify's sidebar. The settings page lets you:
 
+- follow Spotify's interface language automatically or choose English, Simplified Chinese, or Japanese;
 - switch between hiragana, katakana, and romaji readings;
 - adjust reading size from 30% to 75%;
 - adjust opacity from 40% to 100%;

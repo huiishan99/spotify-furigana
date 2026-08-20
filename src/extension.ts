@@ -25,6 +25,13 @@ import {
   type OnlineTrackMetadata,
   setCachedOnlineReading,
 } from "./online-readings";
+import {
+  getRuntimeUiLanguage,
+  translateRuntimeMessage,
+  UI_LANGUAGE_CHANGE_EVENT,
+  type RuntimeMessageKey,
+  type UiLanguage,
+} from "./ui-language";
 
 const STATE_ATTRIBUTE = "data-spotify-furigana";
 const STYLE_ID = "spotify-furigana-styles";
@@ -152,6 +159,7 @@ async function main(): Promise<void> {
   const lineGeneration = new WeakMap<HTMLElement, number>();
 
   let settings = getFuriganaSettings();
+  let uiLanguage: UiLanguage = getRuntimeUiLanguage(Spicetify.LocalStorage);
   let enabled = settings.enabled;
   let generationCounter = 0;
   let engineUnavailable = false;
@@ -160,6 +168,13 @@ async function main(): Promise<void> {
   let activeOnlineTrackUri: string | undefined;
   let onlineReadings: OnlineReadingIndex | undefined;
   let onlineLoadGeneration = 0;
+
+  function t(
+    key: RuntimeMessageKey,
+    values?: Record<string, string | number>,
+  ): string {
+    return translateRuntimeMessage(uiLanguage, key, values);
+  }
 
   function publishOnlineStatus(status: OnlineReadingStatus): void {
     Spicetify.LocalStorage.set(ONLINE_STATUS_KEY, JSON.stringify(status));
@@ -204,7 +219,8 @@ async function main(): Promise<void> {
     if (!settings.onlineReadings) {
       publishOnlineStatus({
         state: "idle",
-        message: "在线精准读音未开启",
+        code: "online-disabled",
+        message: t("onlineDisabled"),
       });
       return;
     }
@@ -212,7 +228,8 @@ async function main(): Promise<void> {
     if (!track) {
       publishOnlineStatus({
         state: "fallback",
-        message: "当前没有可查询的 Spotify 曲目，使用本地词典",
+        code: "no-track",
+        message: t("noTrackFallback"),
       });
       return;
     }
@@ -222,10 +239,15 @@ async function main(): Promise<void> {
       onlineReadings = cached.result?.readings;
       publishOnlineStatus(
         cached.result
-          ? { state: "ready", message: "已从本地缓存加载同步读音" }
+          ? {
+              state: "ready",
+              code: "cache-ready",
+              message: t("cachedReady"),
+            }
           : {
               state: "fallback",
-              message: "当前歌曲暂无同步读音，使用本地词典",
+              code: "not-found",
+              message: t("notFoundFallback"),
             },
       );
       restoreAll();
@@ -235,7 +257,8 @@ async function main(): Promise<void> {
 
     publishOnlineStatus({
       state: "loading",
-      message: "正在查询当前歌曲的同步读音…",
+      code: "loading",
+      message: t("loading"),
     });
 
     try {
@@ -253,11 +276,16 @@ async function main(): Promise<void> {
         result
           ? {
               state: "ready",
-              message: `已匹配 ${Object.keys(result.readings).length} 行同步读音`,
+              code: "matched",
+              count: Object.keys(result.readings).length,
+              message: t("matched", {
+                count: Object.keys(result.readings).length,
+              }),
             }
           : {
               state: "fallback",
-              message: "当前歌曲暂无同步读音，使用本地词典",
+              code: "not-found",
+              message: t("notFoundFallback"),
             },
       );
     } catch (error: unknown) {
@@ -270,7 +298,8 @@ async function main(): Promise<void> {
       );
       publishOnlineStatus({
         state: "error",
-        message: "在线读音暂时不可用，已自动使用本地词典",
+        code: "unavailable",
+        message: t("unavailableFallback"),
       });
     }
 
@@ -365,7 +394,7 @@ async function main(): Promise<void> {
       if (!reportedEngineError) {
         reportedEngineError = true;
         console.warn("[Furigana for Spotify] Reading engine failed to load.", error);
-        Spicetify.showNotification("Furigana 词典加载失败", true);
+        Spicetify.showNotification(t("dictionaryFailed"), true);
       }
     }
   }
@@ -415,7 +444,9 @@ async function main(): Promise<void> {
     setFuriganaSettings(settings);
     applyAppearance(settings);
     playbarButton.active = enabled;
-    playbarButton.label = enabled ? "关闭歌词振假名" : "开启歌词振假名";
+    playbarButton.label = enabled
+      ? t("disableFurigana")
+      : t("enableFurigana");
 
     if (readingModeChanged || onlineReadingsChanged) {
       restoreAll();
@@ -437,7 +468,7 @@ async function main(): Promise<void> {
 
     if (announce) {
       Spicetify.showNotification(
-        enabled ? "歌词振假名已开启" : "歌词振假名已关闭",
+        enabled ? t("enabledNotice") : t("disabledNotice"),
       );
     }
 
@@ -451,7 +482,7 @@ async function main(): Promise<void> {
   }
 
   const playbarButton = new Spicetify.Playbar.Button(
-    enabled ? "关闭歌词振假名" : "开启歌词振假名",
+    enabled ? t("disableFurigana") : t("enableFurigana"),
     PLAYBAR_FU_ICON,
     () =>
       applySettings({ ...settings, enabled: !enabled }, true, true),
@@ -466,6 +497,13 @@ async function main(): Promise<void> {
     }
   });
 
+  window.addEventListener(UI_LANGUAGE_CHANGE_EVENT, () => {
+    uiLanguage = getRuntimeUiLanguage(Spicetify.LocalStorage);
+    playbarButton.label = enabled
+      ? t("disableFurigana")
+      : t("enableFurigana");
+  });
+
   window.addEventListener(ONLINE_CACHE_CLEAR_EVENT, () => {
     onlineLoadGeneration += 1;
     clearOnlineReadingCache(Spicetify.LocalStorage);
@@ -476,7 +514,8 @@ async function main(): Promise<void> {
     } else {
       publishOnlineStatus({
         state: "idle",
-        message: "在线缓存已清除",
+        code: "cache-cleared",
+        message: t("cacheCleared"),
       });
     }
     if (enabled && !settings.onlineReadings) {

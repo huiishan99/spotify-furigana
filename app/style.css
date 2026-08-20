@@ -50,6 +50,27 @@
   align-items: flex-start;
 }
 
+.spotify-furigana-app__language {
+  margin-bottom: 18px;
+}
+
+.spotify-furigana-app__language-select {
+  min-width: 180px;
+  padding: 10px 38px 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--spice-text) 20%, transparent);
+  border-radius: 10px;
+  color: var(--spice-text);
+  background: var(--spice-card);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.spotify-furigana-app__language-select:focus-visible {
+  outline: 2px solid var(--spice-button);
+  outline-offset: 2px;
+}
+
 .spotify-furigana-app__online > div {
   max-width: 560px;
 }
@@ -239,5 +260,14 @@
 
   .spotify-furigana-app__online {
     flex-direction: column;
+  }
+
+  .spotify-furigana-app__language {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .spotify-furigana-app__language-select {
+    width: 100%;
   }
 }

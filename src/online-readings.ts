@@ -43,6 +43,16 @@ export interface CachedOnlineReading {
 export interface OnlineReadingStatus {
   state: "idle" | "loading" | "ready" | "fallback" | "error";
   message: string;
+  code?:
+    | "online-disabled"
+    | "no-track"
+    | "cache-ready"
+    | "not-found"
+    | "loading"
+    | "matched"
+    | "unavailable"
+    | "cache-cleared";
+  count?: number;
 }
 
 export type JsonRequest = (

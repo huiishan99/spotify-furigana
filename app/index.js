@@ -12,6 +12,226 @@ const settingKeys = {
 const onlineStatusKey = "spotify-furigana:online-status";
 const onlineStatusEvent = "spotify-furigana:online-status-change";
 const onlineCacheClearEvent = "spotify-furigana:online-cache-clear";
+const uiLanguageKey = "spotify-furigana:ui-language";
+const uiLanguageChangeEvent = "spotify-furigana:ui-language-change";
+const uiLanguagePreferences = ["auto", "en", "zh-CN", "ja"];
+
+const translations = {
+  en: {
+    eyebrow: "Japanese lyric companion",
+    lead:
+      "Show hiragana, katakana, or romaji above Japanese kanji lyrics in Spotify Desktop for Windows and macOS. Local analysis is the default, with optional synchronized pronunciation matching.",
+    interfaceLanguage: "Interface language",
+    interfaceLanguageDescription:
+      "Follow Spotify automatically or choose a language for this app.",
+    automatic: "Auto",
+    english: "English",
+    chinese: "简体中文",
+    japanese: "日本語",
+    annotationTitle: "Lyric furigana",
+    currentlyOn: "Currently on",
+    currentlyOff: "Currently off",
+    turnOff: "Turn off",
+    turnOn: "Turn on",
+    onlineTitle: "Accurate online readings (experimental)",
+    onlineDescription:
+      "Use synchronized romanization for special sung pronunciations, with automatic fallback to local readings.",
+    privacy:
+      "When enabled, the public track title and artist are sent to GD Studio. If scripts differ, the public artist name is sent to MusicBrainz for alias verification, then lyrics and romanization are requested from NetEase Cloud Music. “Synchronized” means timestamp pairing, not audio analysis; results are cached only on this device.",
+    clearCache: "Clear cache",
+    displayTitle: "Furigana display",
+    displayDescription: "Changes are saved and applied immediately.",
+    reset: "Reset",
+    readingStyle: "Reading style",
+    hiragana: "Hiragana",
+    katakana: "Katakana",
+    romaji: "Romaji",
+    fontSize: "Size",
+    opacity: "Opacity",
+    verticalGap: "Vertical gap",
+    runtimeReady: "Runtime ready · Spicetify {version}",
+    runtimeMissing: "Runtime API incomplete; run spicetify apply again",
+    hint:
+      "You can also use the ふ button in the player bar. Changing the reading style regenerates the current lyrics; the local dictionary may take a moment to load the first time.",
+    statusOnlineDisabled: "Accurate online readings are off",
+    statusNoTrack: "No Spotify track is available; using local readings",
+    statusCacheReady: "Loaded synchronized readings from the local cache",
+    statusNotFound:
+      "No synchronized readings found for this track; using local readings",
+    statusLoading: "Looking up synchronized readings…",
+    statusMatched: "Matched {count} synchronized lyric lines",
+    statusUnavailable:
+      "Online readings are temporarily unavailable; using local readings",
+    statusCacheCleared: "Online reading cache cleared",
+    statusWaiting: "Waiting for the current track status",
+  },
+  "zh-CN": {
+    eyebrow: "日本語歌词辅助",
+    lead:
+      "在 Windows 与 macOS Spotify 桌面端的日语歌词汉字上方显示平假名、片假名或罗马字。默认本地分析，也可主动开启同步读音匹配。",
+    interfaceLanguage: "界面语言",
+    interfaceLanguageDescription: "自动跟随 Spotify，或单独选择本应用的语言。",
+    automatic: "自动",
+    english: "English",
+    chinese: "简体中文",
+    japanese: "日本語",
+    annotationTitle: "歌词注音",
+    currentlyOn: "当前已开启",
+    currentlyOff: "当前已关闭",
+    turnOff: "关闭",
+    turnOn: "开启",
+    onlineTitle: "在线精准读音（实验性）",
+    onlineDescription:
+      "使用同步罗马音修正歌词中的特殊唱法；无结果时自动回退本地词典。",
+    privacy:
+      "开启后会向 GD Studio 发送公开的歌曲名和歌手；文字不同而无法匹配时，会向 MusicBrainz 查询公开歌手别名，再从网易云音乐读取歌词与罗马音。“同步”指时间戳配对，不会分析音频；结果仅缓存在本机。",
+    clearCache: "清除缓存",
+    displayTitle: "注音显示",
+    displayDescription: "所有调整都会自动保存并实时应用。",
+    reset: "恢复默认",
+    readingStyle: "读音形式",
+    hiragana: "平假名",
+    katakana: "片假名",
+    romaji: "罗马字",
+    fontSize: "字号",
+    opacity: "透明度",
+    verticalGap: "上下间距",
+    runtimeReady: "运行时正常 · Spicetify {version}",
+    runtimeMissing: "运行时 API 不完整，请重新运行 spicetify apply",
+    hint:
+      "也可以点击播放器底部的 ふ 按钮快速开关。切换读音形式时会重新生成当前歌词；本地词典首次加载可能需要片刻。",
+    statusOnlineDisabled: "在线精准读音未开启",
+    statusNoTrack: "当前没有可查询的 Spotify 曲目，使用本地词典",
+    statusCacheReady: "已从本地缓存加载同步读音",
+    statusNotFound: "当前歌曲暂无同步读音，使用本地词典",
+    statusLoading: "正在查询当前歌曲的同步读音…",
+    statusMatched: "已匹配 {count} 行同步读音",
+    statusUnavailable: "在线读音暂时不可用，已自动使用本地词典",
+    statusCacheCleared: "在线缓存已清除",
+    statusWaiting: "等待当前歌曲状态",
+  },
+  ja: {
+    eyebrow: "日本語歌詞サポート",
+    lead:
+      "WindowsとmacOSのSpotifyデスクトップ版で、日本語歌詞の漢字にひらがな、カタカナ、またはローマ字の読みを表示します。通常はローカル解析を使い、同期発音の照合も任意で有効にできます。",
+    interfaceLanguage: "表示言語",
+    interfaceLanguageDescription:
+      "Spotifyに自動で合わせるか、このアプリの言語を選択します。",
+    automatic: "自動",
+    english: "English",
+    chinese: "简体中文",
+    japanese: "日本語",
+    annotationTitle: "歌詞のふりがな",
+    currentlyOn: "現在オン",
+    currentlyOff: "現在オフ",
+    turnOff: "オフにする",
+    turnOn: "オンにする",
+    onlineTitle: "オンライン高精度読み（実験的）",
+    onlineDescription:
+      "同期ローマ字で歌唱特有の読みを補正し、見つからない場合はローカル読みに戻します。",
+    privacy:
+      "有効にすると、公開曲名とアーティスト名をGD Studioへ送信します。表記体系の違いで一致しない場合は、公開アーティスト名をMusicBrainzで別名確認し、その後NetEase Cloud Musicから歌詞とローマ字を取得します。「同期」はタイムスタンプの対応を意味し、音声解析は行いません。結果はこの端末だけに保存されます。",
+    clearCache: "キャッシュを消去",
+    displayTitle: "ふりがな表示",
+    displayDescription: "変更は自動保存され、すぐに反映されます。",
+    reset: "初期設定に戻す",
+    readingStyle: "読みの形式",
+    hiragana: "ひらがな",
+    katakana: "カタカナ",
+    romaji: "ローマ字",
+    fontSize: "文字サイズ",
+    opacity: "不透明度",
+    verticalGap: "上下の間隔",
+    runtimeReady: "ランタイム正常 · Spicetify {version}",
+    runtimeMissing: "ランタイムAPIが不足しています。spicetify applyを再実行してください",
+    hint:
+      "プレーヤーバーの「ふ」ボタンでも切り替えられます。読みの形式を変えると現在の歌詞を再生成します。ローカル辞書の初回読み込みには少し時間がかかる場合があります。",
+    statusOnlineDisabled: "オンライン高精度読みはオフです",
+    statusNoTrack: "検索できるSpotify曲がないため、ローカル読みを使用します",
+    statusCacheReady: "同期読みをローカルキャッシュから読み込みました",
+    statusNotFound: "同期読みが見つからないため、ローカル読みを使用します",
+    statusLoading: "現在の曲の同期読みを検索しています…",
+    statusMatched: "{count}行の同期読みを照合しました",
+    statusUnavailable:
+      "オンライン読みを一時的に利用できないため、ローカル読みを使用します",
+    statusCacheCleared: "オンライン読みのキャッシュを消去しました",
+    statusWaiting: "現在の曲の状態を待っています",
+  },
+};
+
+function normalizeUiLanguagePreference(value) {
+  return uiLanguagePreferences.includes(value) ? value : "auto";
+}
+
+function readUiLanguagePreference() {
+  return normalizeUiLanguagePreference(
+    Spicetify.LocalStorage.get(uiLanguageKey),
+  );
+}
+
+function getLocaleCandidates() {
+  const candidates = [];
+  if (document.documentElement.lang) {
+    candidates.push(document.documentElement.lang);
+  }
+  if (Array.isArray(navigator.languages)) {
+    candidates.push(...navigator.languages);
+  }
+  if (navigator.language) {
+    candidates.push(navigator.language);
+  }
+  return candidates;
+}
+
+function resolveUiLanguage(preference) {
+  if (preference !== "auto") {
+    return preference;
+  }
+  for (const candidate of getLocaleCandidates()) {
+    const normalized = String(candidate).trim().toLowerCase();
+    if (normalized.startsWith("zh")) {
+      return "zh-CN";
+    }
+    if (normalized.startsWith("ja")) {
+      return "ja";
+    }
+    if (normalized) {
+      return "en";
+    }
+  }
+  return "en";
+}
+
+function formatText(template, values = {}) {
+  return template.replace(/\{(\w+)\}/gu, (placeholder, name) =>
+    Object.hasOwn(values, name) ? String(values[name]) : placeholder,
+  );
+}
+
+function localizeOnlineStatus(status, text) {
+  const statusKeys = {
+    "online-disabled": "statusOnlineDisabled",
+    "no-track": "statusNoTrack",
+    "cache-ready": "statusCacheReady",
+    "not-found": "statusNotFound",
+    loading: "statusLoading",
+    matched: "statusMatched",
+    unavailable: "statusUnavailable",
+    "cache-cleared": "statusCacheCleared",
+  };
+  const key = statusKeys[status.code];
+  if (key) {
+    return formatText(text[key], { count: status.count ?? 0 });
+  }
+  const fallbackKeys = {
+    idle: "statusOnlineDisabled",
+    loading: "statusLoading",
+    ready: "statusCacheReady",
+    fallback: "statusNotFound",
+    error: "statusUnavailable",
+  };
+  return text[fallbackKeys[status.state] ?? "statusWaiting"];
+}
 
 const defaultSettings = {
   enabled: true,
@@ -59,7 +279,11 @@ function readSettings() {
 function readOnlineStatus() {
   const raw = Spicetify.LocalStorage.get(onlineStatusKey);
   if (!raw) {
-    return { state: "idle", message: "在线精准读音未开启" };
+    return {
+      state: "idle",
+      code: "online-disabled",
+      message: "",
+    };
   }
 
   try {
@@ -71,7 +295,7 @@ function readOnlineStatus() {
     // Ignore stale or malformed status data.
   }
 
-  return { state: "idle", message: "等待当前歌曲状态" };
+  return { state: "idle", message: "" };
 }
 
 function persistSettings(settings) {
@@ -109,14 +333,26 @@ function SettingSlider({ label, value, min, max, step, valueLabel, onChange }) {
 function SpotifyFuriganaApp() {
   const [settings, setSettings] = react.useState(readSettings);
   const [onlineStatus, setOnlineStatus] = react.useState(readOnlineStatus);
+  const [uiLanguagePreference, setUiLanguagePreference] = react.useState(
+    readUiLanguagePreference,
+  );
   const settingsRef = react.useRef(settings);
   settingsRef.current = settings;
+  const uiLanguage = resolveUiLanguage(uiLanguagePreference);
+  const text = translations[uiLanguage];
 
   const updateSettings = (patch) => {
     const next = { ...settingsRef.current, ...patch };
     settingsRef.current = next;
     persistSettings(next);
     setSettings(next);
+  };
+
+  const updateUiLanguage = (preference) => {
+    const normalized = normalizeUiLanguagePreference(preference);
+    Spicetify.LocalStorage.set(uiLanguageKey, normalized);
+    setUiLanguagePreference(normalized);
+    window.dispatchEvent(new CustomEvent(uiLanguageChangeEvent));
   };
 
   react.useEffect(() => {
@@ -150,13 +386,49 @@ function SpotifyFuriganaApp() {
     react.createElement(
       "p",
       { className: "spotify-furigana-app__eyebrow" },
-      "日本語歌词辅助",
+      text.eyebrow,
     ),
     react.createElement("h1", null, "Furigana for Spotify"),
     react.createElement(
       "p",
       { className: "spotify-furigana-app__lead" },
-      "在 Windows 与 macOS Spotify 桌面端的日语歌词汉字上方显示平假名、片假名或罗马字。默认本地分析，也可主动开启同步读音匹配。",
+      text.lead,
+    ),
+    react.createElement(
+      "div",
+      {
+        className:
+          "spotify-furigana-app__card spotify-furigana-app__language",
+      },
+      react.createElement(
+        "div",
+        null,
+        react.createElement("strong", null, text.interfaceLanguage),
+        react.createElement("p", null, text.interfaceLanguageDescription),
+      ),
+      react.createElement(
+        "select",
+        {
+          className: "spotify-furigana-app__language-select",
+          value: uiLanguagePreference,
+          "aria-label": text.interfaceLanguage,
+          onChange: (event) => updateUiLanguage(event.target.value),
+        },
+        react.createElement(
+          "option",
+          { value: "auto" },
+          `${text.automatic} (${translations[uiLanguage][
+            uiLanguage === "en"
+              ? "english"
+              : uiLanguage === "ja"
+                ? "japanese"
+                : "chinese"
+          ]})`,
+        ),
+        react.createElement("option", { value: "en" }, text.english),
+        react.createElement("option", { value: "zh-CN" }, text.chinese),
+        react.createElement("option", { value: "ja" }, text.japanese),
+      ),
     ),
     react.createElement(
       "div",
@@ -164,11 +436,11 @@ function SpotifyFuriganaApp() {
       react.createElement(
         "div",
         null,
-        react.createElement("strong", null, "歌词注音"),
+        react.createElement("strong", null, text.annotationTitle),
         react.createElement(
           "p",
           null,
-          settings.enabled ? "当前已开启" : "当前已关闭",
+          settings.enabled ? text.currentlyOn : text.currentlyOff,
         ),
       ),
       react.createElement(
@@ -179,7 +451,7 @@ function SpotifyFuriganaApp() {
           "aria-pressed": settings.enabled,
           onClick: () => updateSettings({ enabled: !settings.enabled }),
         },
-        settings.enabled ? "关闭" : "开启",
+        settings.enabled ? text.turnOff : text.turnOn,
       ),
     ),
     react.createElement(
@@ -188,21 +460,21 @@ function SpotifyFuriganaApp() {
       react.createElement(
         "div",
         null,
-        react.createElement("strong", null, "在线精准读音（实验性）"),
+        react.createElement("strong", null, text.onlineTitle),
         react.createElement(
           "p",
           null,
-          "使用同步罗马音修正歌词中的特殊唱法；无结果时自动回退本地词典。",
+          text.onlineDescription,
         ),
         react.createElement(
           "p",
           { className: "spotify-furigana-app__online-status" },
-          onlineStatus.message,
+          localizeOnlineStatus(onlineStatus, text),
         ),
         react.createElement(
           "p",
           { className: "spotify-furigana-app__privacy" },
-          "开启后会向 GD Studio 发送公开的歌曲名和歌手；文字不同而无法匹配时，会向 MusicBrainz 查询公开歌手别名，再从网易云音乐读取歌词与罗马音。“同步”指时间戳配对，不会分析音频；结果仅缓存在本机。",
+          text.privacy,
         ),
       ),
       react.createElement(
@@ -216,7 +488,7 @@ function SpotifyFuriganaApp() {
             onClick: () =>
               window.dispatchEvent(new CustomEvent(onlineCacheClearEvent)),
           },
-          "清除缓存",
+          text.clearCache,
         ),
         react.createElement(
           "button",
@@ -227,7 +499,7 @@ function SpotifyFuriganaApp() {
             onClick: () =>
               updateSettings({ onlineReadings: !settings.onlineReadings }),
           },
-          settings.onlineReadings ? "关闭" : "开启",
+          settings.onlineReadings ? text.turnOff : text.turnOn,
         ),
       ),
     ),
@@ -240,8 +512,8 @@ function SpotifyFuriganaApp() {
         react.createElement(
           "div",
           null,
-          react.createElement("h2", null, "注音显示"),
-          react.createElement("p", null, "所有调整都会自动保存并实时应用。"),
+          react.createElement("h2", null, text.displayTitle),
+          react.createElement("p", null, text.displayDescription),
         ),
         react.createElement(
           "button",
@@ -254,25 +526,25 @@ function SpotifyFuriganaApp() {
                 enabled: settings.enabled,
               }),
           },
-          "恢复默认",
+          text.reset,
         ),
       ),
       react.createElement(
         "strong",
         { className: "spotify-furigana-app__label" },
-        "读音形式",
+        text.readingStyle,
       ),
       react.createElement(
         "div",
         {
           className: "spotify-furigana-app__segments",
           role: "group",
-          "aria-label": "读音形式",
+          "aria-label": text.readingStyle,
         },
         ...[
-          ["hiragana", "平假名"],
-          ["katakana", "片假名"],
-          ["romaji", "罗马字"],
+          ["hiragana", text.hiragana],
+          ["katakana", text.katakana],
+          ["romaji", text.romaji],
         ].map(([mode, label]) =>
           react.createElement(
             "button",
@@ -294,7 +566,7 @@ function SpotifyFuriganaApp() {
         "div",
         { className: "spotify-furigana-app__sliders" },
         react.createElement(SettingSlider, {
-          label: "字号",
+          label: text.fontSize,
           value: settings.size,
           min: 0.3,
           max: 0.75,
@@ -303,7 +575,7 @@ function SpotifyFuriganaApp() {
           onChange: (size) => updateSettings({ size }),
         }),
         react.createElement(SettingSlider, {
-          label: "透明度",
+          label: text.opacity,
           value: settings.opacity,
           min: 0.4,
           max: 1,
@@ -312,7 +584,7 @@ function SpotifyFuriganaApp() {
           onChange: (opacity) => updateSettings({ opacity }),
         }),
         react.createElement(SettingSlider, {
-          label: "上下间距",
+          label: text.verticalGap,
           value: settings.gap,
           min: 0,
           max: 8,
@@ -332,14 +604,14 @@ function SpotifyFuriganaApp() {
         "span",
         null,
         runtimeReady
-          ? `运行时正常 · Spicetify ${runtimeVersion}`
-          : "运行时 API 不完整，请重新运行 spicetify apply",
+          ? formatText(text.runtimeReady, { version: runtimeVersion })
+          : text.runtimeMissing,
       ),
     ),
     react.createElement(
       "p",
       { className: "spotify-furigana-app__hint" },
-      "也可以点击播放器底部的歌词图标快速开关。切换读音形式时会重新生成当前歌词；本地词典首次加载可能需要片刻。",
+      text.hint,
     ),
   );
 }
